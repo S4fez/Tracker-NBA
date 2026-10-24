@@ -2,18 +2,17 @@
 <html lang="th">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101827"><title>NBA Supabase API Test</title>
+<meta name="theme-color" content="#101827"><title>NBA Bet Tracker</title>
 <style>
 :root{color-scheme:dark;--bg:#0b1220;--panel:#131e30;--line:#293950;--text:#eef4ff;--muted:#a6b6cb;--blue:#2563eb}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:900px;margin:auto;padding:18px 14px 40px}h1{font-size:24px;margin:4px 0 8px}h2{font-size:17px;margin:0 0 12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:15px;margin-top:14px}.muted,.help{color:var(--muted);font-size:13px;line-height:1.5}label{display:block;color:var(--muted);font-size:13px;margin:10px 0 5px}input{display:block;width:100%;padding:11px;border:1px solid #40516a;border-radius:10px;background:#0b1423;color:var(--text);font:inherit}button{width:100%;padding:12px;border:0;border-radius:10px;background:var(--blue);color:white;font:inherit;font-weight:650;margin-top:12px}.status{white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1423;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:12px;font-size:13px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{background:#0b1423;border:1px solid var(--line);padding:12px;border-radius:11px}.stat small{display:block;color:var(--muted)}.stat strong{font-size:22px}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);white-space:nowrap}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;color:#cbd5e1}.ok{color:#86efac}.bad{color:#fda4af}.warn{color:#fcd34d}
 </style></head><body><main>
-<div class="muted">DIRECT REST API DIAGNOSTIC</div><h1>🏀 NBA Bet Tracker — Supabase API Test</h1>
-<p class="muted">หน้านี้ลองเรียก Supabase REST API โดยตรงด้วย fetch ไม่ได้ฝังคีย์ไว้ในไฟล์</p>
+<div class="muted">PERSONAL TRACKER · SUPABASE</div><h1>🏀 NBA Bet Tracker</h1>
+<p class="muted">ดูบิลและคู่เดิมพันจาก Supabase ได้โดยไม่ต้องล็อกอิน</p>
 <section class="panel"><h2>ตั้งค่าการเชื่อมต่อ</h2>
 <label for="url">Project URL</label><input id="url" value="https://bogxjsanowvweirywrmw.supabase.co">
-<label for="key">Publishable key หรือ anon key เท่านั้น</label><input id="key" type="password" autocomplete="off" placeholder="sb_publishable_... หรือ anon key">
-<label for="token">Access token จาก Supabase Auth (ถ้าตั้ง RLS ให้ authenticated) — ไม่บังคับ</label><input id="token" type="password" autocomplete="off" placeholder="วาง access_token ของ session ถ้ามี">
-<p class="help">ห้ามใส่ secret/service_role key ที่นี่เด็ดขาด หากเปิด RLS ให้ authenticated ต้องมี access token ของผู้ใช้ที่ล็อกอินด้วย</p>
+<label for="key">Supabase Publishable key</label><input id="key" value="sb_publishable_Dd2isjbZRqW7Yc-LO3-g1w_dffKT67X" autocomplete="off" spellcheck="false">
+<p class="help">ใช้ Publishable key สำหรับหน้าเว็บเท่านั้น ข้อมูลอ่านได้ผ่าน RLS policy ที่ตั้งไว้ ห้ามใช้ secret/service_role key</p>
 <button id="run">ทดสอบ API และดึงข้อมูล</button><div id="status" class="status">ยังไม่ได้ทดสอบ</div>
 </section>
 <section class="panel"><h2>ผลสรุปจาก API</h2><div class="stats">
@@ -23,15 +22,15 @@
 <div class="stat"><small>กำไร/ขาดทุนบิลที่ตัดสินแล้ว</small><strong id="net">—</strong></div>
 </div></section>
 <section class="panel"><h2>รายการบิล (tickets)</h2><div id="ticketTable" class="tablewrap muted">รอผลการทดสอบ</div></section>
-<section class="panel"><h2>รายละเอียดการตอบกลับ</h2><pre id="details">รอผลการทดสอบ</pre></section>
+<section class="panel"><h2>คู่เดิมพันทั้งหมด (bets)</h2><div id="betTable" class="tablewrap muted">รอผลการทดสอบ</div></section>\n <section class="panel"><h2>คู่เดิมพันทั้งหมด (bets)</h2><div id="betTable" class="tablewrap muted">รอผลการทดสอบ</div></section>\n <section class="panel"><h2>รายละเอียดการตอบกลับ</h2><pre id="details">รอผลการทดสอบ</pre></section>
 </main>
 <script>
 const $=id=>document.getElementById(id);
 const money=n=>Number(n||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2})+' ฿';
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ticketNet(t){if(t.status==='won')return Number(t.payout_if_win||0)-Number(t.stake||0);if(t.status==='lost')return -Number(t.stake||0);if(t.status==='void')return 0;if(t.status==='partial'&&t.net_profit!=null)return Number(t.net_profit);return null;}
-async function getTable(base,key,token,table){
- const headers={'apikey':key,'Authorization':'Bearer '+(token||key),'Accept':'application/json'};
+async function getTable(base,key,table){
+ const headers={'apikey':key,'Authorization':'Bearer '+key,'Accept':'application/json'};
  const url=base.replace(/\/+$/,'')+'/rest/v1/'+table+'?select=*&order=id.desc&limit=1000';
  const res=await fetch(url,{headers});
  const text=await res.text();let body;try{body=JSON.parse(text)}catch{body=text}
@@ -40,21 +39,21 @@ async function getTable(base,key,token,table){
  return {data:body,status:res.status,url};
 }
 $('run').addEventListener('click',async()=>{
- const base=$('url').value.trim(),key=$('key').value.trim(),token=$('token').value.trim();
- $('status').textContent='กำลังเรียก REST API…';$('status').className='status';$('details').textContent='';$('ticketTable').textContent='กำลังโหลด…';
+ const base=$('url').value.trim(),key=$('key').value.trim();
+ $('status').textContent='กำลังเรียก REST API…';$('status').className='status';$('details').textContent='';$('ticketTable').textContent='กำลังโหลด…';$('betTable').textContent='กำลังโหลด…';$('betTable').textContent='กำลังโหลด…';
  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(base)){ $('status').textContent='Project URL ไม่ถูกต้อง';$('status').className='status bad';return;}
  if(!key){$('status').textContent='กรุณาใส่ Publishable key หรือ anon key';$('status').className='status bad';return;}
  if(/^sb_secret_/i.test(key)||/service_role/i.test(key)){ $('status').textContent='ปฏิเสธการทำงาน: ห้ามใช้ secret/service_role key ใน frontend';$('status').className='status bad';return;}
  try{
-  const [t,b]=await Promise.all([getTable(base,key,token,'tickets'),getTable(base,key,token,'bets')]);
+  const [t,b]=await Promise.all([getTable(base,key,'tickets'),getTable(base,key,'bets')]);
   const tickets=t.data,bets=b.data,settled=tickets.filter(x=>ticketNet(x)!==null),net=settled.reduce((s,x)=>s+ticketNet(x),0),stake=tickets.reduce((s,x)=>s+Number(x.stake||0),0);
   $('tickets').textContent=tickets.length;$('bets').textContent=bets.length;$('stake').textContent=money(stake);$('net').textContent=money(net);
   $('ticketTable').innerHTML=tickets.length?`<table><thead><tr><th>Ticket ID</th><th>วันที่</th><th>เดิมพัน</th><th>สถานะ</th><th>กำไร/ขาดทุน</th></tr></thead><tbody>${tickets.map(x=>{const n=ticketNet(x);return `<tr><td>${esc(x.ticket_code)}</td><td>${esc(x.bet_date)}</td><td>${money(x.stake)}</td><td>${esc(x.status)}</td><td>${n===null?'รอผล':money(n)}</td></tr>`}).join('')}</tbody></table>`:'API สำเร็จ แต่ไม่พบบิลที่อ่านได้ (อาจยังไม่มีข้อมูล หรือ RLS ซ่อนแถวที่ไม่ได้เป็นเจ้าของ)';
   $('status').textContent='สำเร็จ: REST API ตอบ HTTP '+t.status+' (tickets) และ HTTP '+b.status+' (bets)';$('status').className='status ok';
   $('details').textContent=JSON.stringify({tickets:{http:t.status,count:tickets.length,endpoint:t.url},bets:{http:b.status,count:bets.length,endpoint:b.url},note:'จำกัดผลลัพธ์สูงสุด 1000 แถวต่อ table ในการทดสอบนี้'},null,2);
  }catch(e){
-  $('status').textContent='เรียก API ไม่สำเร็จ\n'+(e.message||String(e));$('status').className='status bad';
-  $('details').textContent='แนวทางตรวจสอบ:\n• 401/Invalid API key: ตรวจ Publishable/anon key ให้ตรงกับโปรเจกต์\n• 401/JWT: ถ้าใส่ access token ให้ตรวจว่า session ยังใช้ได้\n• 403 หรือ permission denied: ตรวจว่าเปิด Data API และมี GRANT/policy ที่เหมาะสม\n• 200 แต่ได้ 0 แถว: ตรวจว่ามีข้อมูลและ RLS อนุญาตให้บัญชีนี้อ่าน\n• Failed to fetch: เปิดไฟล์ผ่าน HTTPS/เว็บโฮสต์ และตรวจการเชื่อมต่ออินเทอร์เน็ต\n\nรายละเอียดจริง:\n'+(e.message||String(e));
+  $('status').textContent='เรียก API ไม่สำเร็จ\n'+(e.message||String(e));$('status').className='status bad';$('betTable').textContent='โหลดข้อมูลไม่สำเร็จ';
+  $('details').textContent='แนวทางตรวจสอบ:\n• 401/Invalid API key: ตรวจ Publishable/anon key ให้ตรงกับโปรเจกต์\n• 403 หรือ permission denied: ตรวจว่าเปิด Data API และมี GRANT/policy ที่เหมาะสม\n• 200 แต่ได้ 0 แถว: ตรวจว่ามีข้อมูลและ RLS อนุญาตให้บัญชีนี้อ่าน\n• Failed to fetch: เปิดไฟล์ผ่าน HTTPS/เว็บโฮสต์ และตรวจการเชื่อมต่ออินเทอร์เน็ต\n\nรายละเอียดจริง:\n'+(e.message||String(e));
  }
 });
 </script></body></html>
