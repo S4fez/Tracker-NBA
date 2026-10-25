@@ -3,126 +3,477 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#10152b">
+<meta name="theme-color" content="#07111f">
 <title>NBA Bet Tracker</title>
 <style>
-:root{color-scheme:dark;--bg:#0a1020;--panel:#121d34;--panel2:#192744;--line:#2b3a5b;--text:#f5f7ff;--muted:#9eacc9;--accent:#d9ad4c;--accent2:#f0d58b;--good:#4bd6a4;--bad:#ff7185;--shadow:0 14px 38px #0003}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 35%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer;color:inherit}.shell{max-width:1180px;margin:auto;padding:18px 18px calc(100px + env(safe-area-inset-bottom))}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:18px}.ball{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent2) 45%,#34230a));font-size:24px;box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 18%,transparent)}.brand small{display:block;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1.2px;margin-top:3px}.actions{display:flex;gap:8px}.btn,.icon-btn,.field{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:10px 13px}.btn.primary{background:linear-gradient(130deg,var(--accent),color-mix(in srgb,var(--accent) 48%,#5c4217));color:#17130a;border-color:transparent;font-weight:800}.btn.ghost{background:transparent}.icon-btn{width:42px;height:42px;display:grid;place-items:center;font-size:18px}.hero{border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:25px;padding:24px;background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 15%,var(--panel)),var(--panel) 60%,color-mix(in srgb,var(--accent2) 7%,var(--panel)));box-shadow:var(--shadow);position:relative;overflow:hidden;margin-bottom:15px}.eyebrow{font-size:10px;font-weight:850;letter-spacing:1.8px;color:var(--accent2)}h1{font-size:clamp(24px,4vw,34px);margin:8px 0}p{line-height:1.55}.hero p{max-width:620px;color:var(--muted);font-size:13px;margin:0}.hero-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:15px}.stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:16px;min-width:0;box-shadow:0 8px 24px #0001}.stat label{color:var(--muted);font-size:12px}.stat strong{display:block;font-size:clamp(20px,2.8vw,27px);margin:9px 0 4px;overflow-wrap:anywhere}.stat small{font-size:11px;color:var(--muted)}.positive{color:var(--good)!important}.negative{color:var(--bad)!important}.tabs{display:flex;gap:7px;overflow:auto;padding:2px 1px 12px;margin-bottom:4px}.tab{border:1px solid var(--line);border-radius:999px;background:var(--panel);padding:10px 14px;white-space:nowrap;color:var(--muted);font-size:12px}.tab.active{background:var(--accent);border-color:transparent;color:#17130a;font-weight:850}.view{display:none}.view.active{display:block;animation:fade .2s ease}@keyframes fade{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:none}}.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.card-head h2{font-size:16px;margin:0}.muted{color:var(--muted)}.tiny{font-size:11px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.field{min-width:0;color:var(--text);outline:none}.field:focus{border-color:var(--accent)}input.field{flex:1;min-width:150px}select.field{max-width:100%}.ticket-list{display:grid;gap:10px}.ticket{width:100%;text-align:left;display:flex;align-items:center;gap:12px;padding:14px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;transition:transform .15s,border-color .15s}.ticket:active{transform:scale(.99)}.ticket:hover{border-color:var(--accent)}.ticket-icon{width:43px;height:43px;flex:0 0 43px;display:grid;place-items:center;border-radius:14px;background:color-mix(in srgb,var(--accent) 16%,var(--panel));font-size:21px}.ticket-main{flex:1;min-width:0}.ticket-main strong{display:block;font-size:13px;overflow-wrap:anywhere}.ticket-main small{display:block;color:var(--muted);font-size:11px;margin-top:5px;line-height:1.4}.ticket-side{text-align:right;white-space:nowrap}.ticket-side strong{display:block;font-size:13px}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#ffffff0b;color:var(--accent2);font-size:10px;margin-top:5px}.empty{padding:28px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:15px;font-size:13px;line-height:1.6}.chart{height:145px;display:flex;align-items:end;gap:8px;padding:12px 4px 24px;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to bottom,transparent 0 34px,#ffffff08 35px 36px)}.bar{flex:1;min-width:5px;border-radius:7px 7px 2px 2px;height:var(--h);background:linear-gradient(180deg,var(--accent2),var(--accent));position:relative}.bar:after{content:attr(data-label);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap}.row-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.row-item:last-child{border:0}.team-logo{width:34px;height:34px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;background:var(--panel2)}.row-main{flex:1;min-width:0}.row-main strong{display:block;font-size:12px}.row-main small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.row-value{text-align:right;font-size:12px;font-weight:800}.theme-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.theme-choice{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:7px;text-align:left;min-width:0}.theme-choice.selected{outline:2px solid var(--accent)}.swatch{height:34px;border-radius:8px;margin-bottom:6px}.theme-choice b{font-size:10px;display:block}.theme-choice small{font-size:9px;color:var(--muted)}.notice{font-size:11px;color:var(--muted);line-height:1.6;margin-top:12px}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:12px;min-width:480px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:650}.pill{padding:4px 7px;border:1px solid var(--line);border-radius:99px;font-size:10px}.bottom-nav{display:none}.overlay{position:fixed;inset:0;z-index:20;background:#02040bd9;backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:.2s}.overlay.open{opacity:1;visibility:visible}.sheet{width:min(760px,100%);max-height:92dvh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;padding:10px 18px calc(24px + env(safe-area-inset-bottom));transform:translateY(20px);transition:transform .22s}.overlay.open .sheet{transform:none}.grabber{height:4px;width:40px;border-radius:8px;background:var(--line);margin:2px auto 17px}.sheet-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:16px}.sheet-head h2{font-size:23px;margin:4px 0}.close{border:1px solid var(--line);background:var(--panel);border-radius:12px;width:40px;height:40px;font-size:20px}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:18px}.detail-box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;min-width:0}.detail-box span{display:block;color:var(--muted);font-size:10px;margin-bottom:6px}.detail-box strong{font-size:16px;overflow-wrap:anywhere}.detail-section{margin-top:18px}.detail-section h3{font-size:15px;margin:0 0 10px}.leg-list{display:grid;gap:9px}.leg{border:1px solid var(--line);border-radius:15px;background:var(--panel);overflow:hidden}.leg-button{width:100%;display:flex;gap:10px;align-items:center;padding:12px;text-align:left;background:transparent;border:0}.leg-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--panel2);font-size:20px;flex:0 0 38px}.leg-main{flex:1;min-width:0}.leg-main strong{display:block;font-size:12px}.leg-main small{display:block;color:var(--muted);font-size:10px;margin-top:4px;line-height:1.4}.leg-price{text-align:right;white-space:nowrap}.leg-price strong{font-size:13px}.leg-price small{display:block;color:var(--accent2);font-size:10px;margin-top:3px}.leg-extra{display:none;padding:0 12px 13px}.leg.expanded .leg-extra{display:block}.leg-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.mini{padding:9px;background:var(--panel2);border-radius:10px;min-width:0}.mini span{display:block;color:var(--muted);font-size:9px;margin-bottom:4px}.mini b{font-size:11px;overflow-wrap:anywhere}.player-panel{border:1px solid var(--line);border-radius:12px;padding:11px;margin-top:8px}.player-panel strong{font-size:11px}.player-panel p{margin:5px 0 0;color:var(--muted);font-size:10px;line-height:1.55}.modal{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:#000b;padding:15px}.modal.open{display:grid}.modal-card{width:min(520px,100%);max-height:90dvh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px}.modal-card h2{font-size:18px;margin:0 0 8px}.form-row{display:grid;gap:6px;margin:12px 0}.form-row label{font-size:12px;color:var(--muted)}.form-row input{width:100%}.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.statusline{padding:11px;border:1px solid var(--line);background:var(--panel2);border-radius:12px;font-size:12px;line-height:1.5;margin-top:10px;overflow-wrap:anywhere}.statusline.ok{color:var(--good)}.statusline.err{color:var(--bad)}.spinner{display:inline-block;width:13px;height:13px;border:2px solid #ffffff4d;border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}@keyframes spin{to{transform:rotate(360deg)}}.hidden{display:none!important}
-@media(min-width:701px){.overlay{align-items:center;padding:20px}.sheet{border:1px solid var(--line);border-radius:25px;max-height:88vh}.grabber{display:none}}
-@media(max-width:700px){.shell{padding:12px 12px calc(92px + env(safe-area-inset-bottom))}.topbar{margin-bottom:13px}.brand{font-size:14px}.brand small{font-size:9px}.ball{width:38px;height:38px}.actions .btn{font-size:11px;padding:9px}.hero{padding:19px;border-radius:21px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{padding:13px;border-radius:16px}.layout{grid-template-columns:1fr}.card{padding:14px;border-radius:17px}.theme-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.theme-choice b{font-size:10px}.bottom-nav{display:flex;position:fixed;z-index:10;left:0;right:0;bottom:0;justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:color-mix(in srgb,var(--bg) 91%,transparent);backdrop-filter:blur(20px)}.nav-item{background:transparent;border:0;color:var(--muted);font-size:10px;padding:3px 8px;display:grid;gap:4px;justify-items:center}.nav-item.active{color:var(--accent)}.nav-item span:first-child{font-size:18px}.ticket{padding:11px;gap:9px}.ticket-icon{width:38px;height:38px;flex-basis:38px}.ticket-main strong{font-size:12px}.ticket-side strong{font-size:12px}.sheet{padding-left:13px;padding-right:13px}.sheet-head h2{font-size:21px}}
+:root{color-scheme:dark;--bg:#07111f;--panel:#0d1b2e;--panel2:#13253d;--line:#21364f;--text:#eef6fb;--muted:#93a8bf;--accent:#2dd4bf;--accent2:#7ee8da;--good:#3ddc97;--bad:#ff6b81;--warn:#f5b94a;--on-accent:#04201c;--radius:18px;--shadow:0 14px 38px #0004}
+*{box-sizing:border-box}html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:radial-gradient(ellipse at 10% -10%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 40%),radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--accent2) 6%,transparent),transparent 35%),var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Thai",sans-serif;min-height:100vh;overflow-x:hidden}
+button,input,select{font:inherit}button{cursor:pointer;color:inherit}a{color:var(--accent2)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shell{max-width:1180px;margin:auto;padding:18px 20px calc(100px + env(safe-area-inset-bottom))}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:17px;letter-spacing:.3px;min-width:0}
+.ball{width:42px;height:42px;flex:0 0 42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(140deg,var(--accent),color-mix(in srgb,var(--accent) 35%,var(--panel2)));font-size:22px;box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 22%,transparent)}
+.brand small{display:block;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1.2px;margin-top:3px}
+.actions{display:flex;gap:8px}
+.btn,.icon-btn,.field{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 13px;color:var(--text)}
+.btn:hover,.icon-btn:hover{border-color:color-mix(in srgb,var(--accent) 60%,var(--line))}
+.btn:disabled{opacity:.55;cursor:wait}
+.btn.primary{background:linear-gradient(130deg,var(--accent),color-mix(in srgb,var(--accent) 70%,var(--accent2)));color:var(--on-accent);border-color:transparent;font-weight:800}
+.btn.ghost{background:transparent}.btn.sm{padding:7px 11px;font-size:12px}
+.icon-btn{width:42px;height:42px;display:grid;place-items:center;font-size:18px}
+.conn{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.statusline{padding:10px 12px;border:1px solid var(--line);background:var(--panel);border-radius:12px;font-size:12px;line-height:1.5;overflow-wrap:anywhere;flex:1;min-width:0;color:var(--muted)}
+.statusline.ok{color:var(--good);border-color:color-mix(in srgb,var(--good) 35%,var(--line))}
+.statusline.err{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.tabs{display:flex;gap:6px;padding:5px;margin-bottom:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;width:max-content;max-width:100%;overflow:auto}
+.tab{border:0;border-radius:11px;background:transparent;padding:10px 16px;white-space:nowrap;color:var(--muted);font-size:13px;font-weight:650}
+.tab:hover{color:var(--text)}.tab.active{background:var(--accent);color:var(--on-accent);font-weight:800}
+.view{display:none}.view.active{display:block;animation:fade .2s ease}
+@keyframes fade{from{opacity:.6;transform:translateY(3px)}to{opacity:1;transform:none}}
+.hero{border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:22px;padding:22px;background:linear-gradient(115deg,color-mix(in srgb,var(--accent) 13%,var(--panel)),var(--panel) 62%);box-shadow:var(--shadow);margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.eyebrow{font-size:10px;font-weight:850;letter-spacing:1.8px;color:var(--accent2)}
+h1{font-size:clamp(22px,3.6vw,30px);margin:6px 0}p{line-height:1.55}
+.hero p{max-width:600px;color:var(--muted);font-size:13px;margin:0}
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.stats.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;min-width:0;box-shadow:0 8px 24px #0002}
+.stat label{color:var(--muted);font-size:12px;display:block}
+.stat strong{display:block;font-size:clamp(19px,2.4vw,25px);margin:8px 0 3px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.stat small{font-size:11px;color:var(--muted)}
+.positive{color:var(--good)!important}.negative{color:var(--bad)!important}
+.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.layout.even{grid-template-columns:1fr 1fr}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.card-head h2{font-size:16px;margin:0}.card+.card,.stack>*+*{margin-top:14px}
+.muted{color:var(--muted)}.tiny{font-size:11px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.filters.f3{grid-template-columns:2fr 1fr 1fr}
+.field{min-width:0;width:100%;outline:none}.field:focus{border-color:var(--accent)}
+.flabel{display:grid;gap:4px;font-size:11px;color:var(--muted);min-width:0}
+.ticket-list,.game-list{display:grid;gap:10px}
+.ticket{width:100%;text-align:left;display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:15px;transition:transform .15s,border-color .15s}
+.ticket:active{transform:scale(.99)}.ticket:hover{border-color:var(--accent)}
+.ticket-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:13px;background:color-mix(in srgb,var(--accent) 14%,var(--panel));font-size:20px}
+.ticket-main{flex:1;min-width:0}.ticket-main strong{display:block;font-size:13px;overflow-wrap:anywhere}
+.ticket-main small{display:block;color:var(--muted);font-size:11px;margin-top:5px;line-height:1.4}
+.ticket-side{text-align:right;white-space:nowrap;display:grid;gap:5px;justify-items:end}
+.ticket-side strong{font-size:13px;font-variant-numeric:tabular-nums}.ticket-side small{font-size:11px;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:750;border:1px solid var(--line);background:#ffffff08;color:var(--muted);white-space:nowrap}
+.s-won{color:var(--good);border-color:color-mix(in srgb,var(--good) 45%,transparent);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.s-lost{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,transparent);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.s-push{color:var(--accent2);border-color:color-mix(in srgb,var(--accent2) 40%,transparent);background:color-mix(in srgb,var(--accent2) 10%,transparent)}
+.s-void{color:var(--muted);border-style:dashed}
+.s-pending{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:color-mix(in srgb,var(--warn) 10%,transparent)}
+.s-partial{color:#c4a7ff;border-color:#c4a7ff66;background:#c4a7ff14}
+.empty{padding:26px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px;font-size:13px;line-height:1.6}
+.chart{height:170px;display:flex;align-items:center;gap:8px;padding:8px 4px 22px;position:relative}
+.chart:before{content:"";position:absolute;left:0;right:0;top:calc(50% - 7px);border-top:1px dashed var(--line)}
+.bar-col{flex:1;min-width:6px;height:100%;display:flex;flex-direction:column;position:relative}
+.bar-col .up,.bar-col .down{flex:1;display:flex}.bar-col .up{align-items:flex-end}.bar-col .down{align-items:flex-start}
+.bar{width:100%;border-radius:6px;height:var(--h);background:linear-gradient(180deg,var(--accent2),var(--accent))}
+.bar.neg{background:linear-gradient(0deg,color-mix(in srgb,var(--bad) 60%,transparent),var(--bad))}
+.bar-col:after{content:attr(data-label);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap}
+.row-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}.row-item:last-child{border:0}
+.team-logo{width:34px;height:34px;flex:0 0 34px;border:1px solid var(--line);border-radius:11px;display:grid;place-items:center;background:var(--panel2)}
+.row-main{flex:1;min-width:0}.row-main strong{display:block;font-size:12px}.row-main small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.notice{font-size:11px;color:var(--muted);line-height:1.6;margin:12px 0 0}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;font-size:12px;min-width:560px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:0}tbody tr:hover td{background:#ffffff05}
+th{color:var(--muted);font-weight:650;background:var(--panel2);position:sticky;top:0}
+td.num,th.num{text-align:right}
+.rate{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.rate i{display:block;width:54px;height:6px;border-radius:9px;background:var(--panel2);overflow:hidden}
+.rate i b{display:block;height:100%;width:var(--w);background:var(--accent)}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.split .stat strong{font-size:18px}
+/* games */
+.game{background:var(--panel2);border:1px solid var(--line);border-radius:15px;padding:13px 14px;min-width:0}
+.game-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.game-title{min-width:0}.game-title strong{display:block;font-size:14px;overflow-wrap:anywhere}
+.game-title small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.game-meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:11px}
+.mini{padding:8px 9px;background:var(--panel);border:1px solid var(--line);border-radius:10px;min-width:0}
+.mini span{display:block;color:var(--muted);font-size:9.5px;margin-bottom:3px}
+.mini b{font-size:12px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+details.impact{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+details.impact>summary{list-style:none;cursor:pointer;padding:10px 12px;font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:8px}
+details.impact>summary::-webkit-details-marker{display:none}
+details.impact>summary:after{content:"▾";color:var(--muted);transition:transform .15s}
+details.impact[open]>summary:after{transform:rotate(180deg)}
+.impact-list{display:grid;gap:8px;padding:0 10px 10px}
+.pi{border:1px solid var(--line);border-left:3px solid var(--line);border-radius:10px;padding:10px 11px;background:var(--panel2);min-width:0}
+.pi.out{border-left-color:var(--bad)}.pi.q{border-left-color:var(--warn)}.pi.ok{border-left-color:var(--good)}
+.pi-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.pi-head strong{font-size:12.5px;overflow-wrap:anywhere}.pi-head small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
+.pi p{margin:6px 0 0;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.pi .reason{color:var(--muted)}
+.pi-foot{display:flex;gap:10px;flex-wrap:wrap;margin-top:7px;font-size:10.5px;color:var(--muted)}
+.pi-foot a{overflow-wrap:anywhere}
+.pi-extra{margin-top:6px;font-size:10.5px;color:var(--muted);overflow-wrap:anywhere}
+.no-impact{margin-top:10px;font-size:11px;color:var(--muted)}
+/* bottom nav */
+.bottom-nav{display:none}
+/* detail sheet */
+.overlay{position:fixed;inset:0;z-index:20;background:#02040bd9;backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;visibility:hidden;transition:.2s}
+.overlay.open{opacity:1;visibility:visible}
+.sheet{width:min(780px,100%);max-height:92dvh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;padding:10px 18px calc(24px + env(safe-area-inset-bottom));transform:translateY(20px);transition:transform .22s}
+.overlay.open .sheet{transform:none}
+.grabber{height:4px;width:40px;border-radius:8px;background:var(--line);margin:2px auto 16px}
+.sheet-head{display:flex;justify-content:space-between;gap:12px;align-items:start;margin-bottom:14px}
+.sheet-head h2{font-size:22px;margin:4px 0;overflow-wrap:anywhere}
+.close{border:1px solid var(--line);background:var(--panel);border-radius:12px;width:40px;height:40px;flex:0 0 40px;font-size:20px}
+.detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.detail-box{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px;min-width:0}
+.detail-box span{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}
+.detail-box strong{font-size:15px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.detail-section h3{font-size:15px;margin:0 0 10px}
+/* settings modal */
+.modal{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:#000b;padding:15px}
+.modal.open{display:grid}
+.modal-card{width:min(560px,100%);max-height:90dvh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px}
+.modal-card h2{font-size:18px;margin:0}.modal-card h3{font-size:14px;margin:20px 0 8px}
+.form-row{display:grid;gap:6px;margin:12px 0}.form-row label{font-size:12px;color:var(--muted)}
+.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+#settingsStatus{margin-top:10px}
+.theme-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.theme-choice{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:7px;text-align:left;min-width:0}
+.theme-choice.selected{outline:2px solid var(--accent)}
+.swatch{height:30px;border-radius:8px;margin-bottom:6px}
+.theme-choice b{font-size:10px;display:block;overflow-wrap:anywhere}.theme-choice small{font-size:9px;color:var(--muted)}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid #ffffff4d;border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+@media(min-width:701px){.overlay{align-items:center;padding:20px}.sheet{border:1px solid var(--line);border-radius:24px;max-height:88vh}.grabber{display:none}}
+@media(max-width:960px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.filters{grid-template-columns:1fr 1fr}.filters .wide{grid-column:1/-1}.game-meta{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+.shell{padding:12px 12px calc(84px + env(safe-area-inset-bottom))}
+.brand{font-size:14px}.brand small{font-size:9px}.ball{width:38px;height:38px;flex-basis:38px}
+.actions .btn{font-size:12px;padding:9px 10px}
+.tabs{display:none}
+.hero{padding:17px;border-radius:19px}.hero-actions{width:100%}.hero-actions .btn{flex:1}
+.stats,.stats.four{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.stats .stat:first-child:nth-last-child(odd){grid-column:1/-1}
+.stat{padding:13px;border-radius:15px}
+.layout,.layout.even{grid-template-columns:1fr}.split{grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:7px}.split .stat{padding:10px}.split .stat strong{font-size:15px}
+.card{padding:13px;border-radius:16px}
+.filters,.filters.f3{grid-template-columns:1fr 1fr}
+.detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bottom-nav{display:flex;position:fixed;z-index:10;left:0;right:0;bottom:0;justify-content:space-around;padding:7px 6px calc(7px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(20px)}
+.nav-item{background:transparent;border:0;color:var(--muted);font-size:10.5px;padding:4px 6px;display:grid;gap:3px;justify-items:center;flex:1;min-width:0;border-radius:10px}
+.nav-item span:first-child{font-size:18px;line-height:1}
+.nav-item.active{color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.ticket{padding:11px;gap:9px}.ticket-icon{width:36px;height:36px;flex-basis:36px;font-size:18px}
+.sheet{padding-left:13px;padding-right:13px}.sheet-head h2{font-size:20px}
+.theme-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:380px){.nav-item{font-size:9.5px}}
 </style>
 </head>
 <body>
 <div class="shell">
 <header class="topbar">
   <div class="brand"><div class="ball">🏀</div><div>NBA BET TRACKER<small>PERSONAL BETTING JOURNAL</small></div></div>
-  <div class="actions"><button class="btn ghost" id="refreshBtn">↻ รีเฟรช</button><button class="icon-btn" id="settingsBtn" aria-label="ตั้งค่า">⚙</button></div>
+  <div class="actions"><button class="btn ghost" id="refreshBtn">↻ รีเฟรช</button><button class="icon-btn" id="settingsBtn" aria-label="ตั้งค่าและธีม">⚙</button></div>
 </header>
-<section class="hero">
-  <div class="eyebrow">YOUR NBA BETTING JOURNAL</div>
-  <h1>สมุดบิลเดิมพันของคุณ</h1>
-  <p>ดูประวัติรายวัน เปิดรายละเอียดแต่ละบิล วิเคราะห์ผลงานตามทีมและแต้มต่อได้ในหน้าเดียว รองรับทั้ง iPhone และ PC</p>
-  <div class="hero-actions"><button class="btn primary" id="heroRefresh">↻ โหลดข้อมูลล่าสุด</button><button class="btn" id="jumpHistory">ดูประวัติบิล ↓</button></div>
-  <div id="connectionStatus" class="statusline">ยังไม่ได้เชื่อมต่อ Supabase · กด ⚙ เพื่อตั้งค่า Project URL และ Publishable key</div>
-</section>
-<section class="stats">
- <div class="stat"><label>🎟️ บิลทั้งหมด</label><strong id="statTickets">0</strong><small>จำนวนบิลในประวัติ</small></div>
- <div class="stat"><label>🏀 คู่เดิมพันทั้งหมด</label><strong id="statBets">0</strong><small>ทุกคู่รวมกัน</small></div>
- <div class="stat"><label>💰 เงินเดิมพันรวม</label><strong id="statStake">฿0.00</strong><small>ยอดเดิมพันสะสมที่อ่านได้</small></div>
- <div class="stat"><label>📈 กำไร / ขาดทุน</label><strong id="statProfit">—</strong><small>เฉพาะข้อมูลที่มีผลตัดสินชัดเจน</small></div>
-</section>
-<nav class="tabs" aria-label="เมนู">
- <button class="tab active" data-view="dashboard">⌂ ภาพรวม</button><button class="tab" data-view="history">▤ ประวัติบิล</button><button class="tab" data-view="teams">♧ วิเคราะห์ทีม</button><button class="tab" data-view="spread">＋ วิเคราะห์แต้มต่อ</button><button class="tab" data-view="themes">✦ ธีม</button>
+<div class="conn"><div id="connectionStatus" class="statusline">ยังไม่ได้เชื่อมต่อ Supabase · กด ⚙ เพื่อตั้งค่า Project URL และ Publishable key</div></div>
+<nav class="tabs" aria-label="เมนูหลัก">
+ <button class="tab active" data-view="dashboard">⌂ ภาพรวม</button><button class="tab" data-view="tickets">▤ บิล</button><button class="tab" data-view="games">🏀 เกม &amp; ผู้เล่น</button><button class="tab" data-view="analytics">📊 วิเคราะห์</button>
 </nav>
+
 <section class="view active" id="view-dashboard">
+ <section class="hero">
+  <div><div class="eyebrow">YOUR NBA BETTING JOURNAL</div><h1>สมุดบิลเดิมพันของคุณ</h1><p>ดูประวัติบิล รายละเอียดแต่ละเกมพร้อมข้อมูลผู้เล่นที่บันทึกไว้ และวิเคราะห์ผลงานตามทีมและแต้มต่อ รองรับทั้ง iPhone และ PC</p></div>
+  <div class="hero-actions"><button class="btn primary" id="heroRefresh">↻ โหลดข้อมูลล่าสุด</button><button class="btn" data-goto="tickets">ดูบิลทั้งหมด →</button></div>
+ </section>
+ <section class="stats">
+  <div class="stat"><label>🎟️ บิลทั้งหมด</label><strong id="statTickets">0</strong><small>จำนวนบิลในประวัติ</small></div>
+  <div class="stat"><label>🏀 คู่เดิมพันทั้งหมด</label><strong id="statBets">0</strong><small>ทุกคู่รวมกัน</small></div>
+  <div class="stat"><label>📋 ผลรายคู่</label><strong id="statRecord">—</strong><small>ชนะ-แพ้-เสมอ (ไม่รวมรอผล/โมฆะ)</small></div>
+  <div class="stat"><label>💰 เงินเดิมพันรวม</label><strong id="statStake">฿0.00</strong><small>ยอดเดิมพันสะสมที่อ่านได้</small></div>
+  <div class="stat"><label>📈 กำไร / ขาดทุน</label><strong id="statProfit">—</strong><small>เฉพาะบิลที่มีผลตัดสินชัดเจน</small></div>
+ </section>
  <div class="layout">
-  <div class="card"><div class="card-head"><h2>📊 ผลงานตามวัน</h2><span class="muted tiny" id="chartCaption">ข้อมูลตามบิลที่โหลดได้</span></div><div id="dailyChart" class="chart"></div><p class="notice">กราฟใช้กำไร/ขาดทุนที่อ่านได้จากข้อมูลจริงเท่านั้น หากตารางไม่มีผลตัดสิน จะไม่คาดเดาผลลัพธ์</p></div>
-  <div class="card"><div class="card-head"><h2>🧾 บิลล่าสุด</h2><button class="btn ghost" data-goto="history">ดูทั้งหมด</button></div><div id="recentTickets" class="ticket-list"><div class="empty">เชื่อมต่อ Supabase เพื่อโหลดบิล</div></div></div>
+  <div class="card"><div class="card-head"><h2>📊 กำไร/ขาดทุน 8 บิลล่าสุด</h2><span class="muted tiny">เรียงตามวันที่บิล</span></div><div id="dailyChart" class="chart"></div><p class="notice">ใช้กำไร/ขาดทุนที่บันทึกในฐานข้อมูลเท่านั้น บิลที่ยังไม่มีผลตัดสินจะแสดงเป็น 0 และไม่คาดเดาผลลัพธ์</p></div>
+  <div class="card"><div class="card-head"><h2>🧾 บิลล่าสุด</h2><button class="btn ghost sm" data-goto="tickets">ดูทั้งหมด</button></div><div id="recentTickets" class="ticket-list"><div class="empty">เชื่อมต่อ Supabase เพื่อโหลดบิล</div></div></div>
  </div>
- <div class="card" style="margin-top:14px"><div class="card-head"><h2>🔎 สรุปสถานะข้อมูล</h2><span class="muted tiny">อ่านอย่างเดียว</span></div><div class="layout"><div><div class="row-item"><span class="team-logo">🗃️</span><div class="row-main"><strong>ตาราง tickets</strong><small id="ticketsStatus">ยังไม่ได้อ่านข้อมูล</small></div></div><div class="row-item"><span class="team-logo">🏀</span><div class="row-main"><strong>ตาราง bets</strong><small id="betsStatus">ยังไม่ได้อ่านข้อมูล</small></div></div></div><div><div class="row-item"><span class="team-logo">🔐</span><div class="row-main"><strong>การเชื่อมต่อ</strong><small>ใช้ Publishable key เท่านั้น และต้องมี RLS policy ที่อนุญาต SELECT</small></div></div><div class="row-item"><span class="team-logo">🧠</span><div class="row-main"><strong>ผู้เล่นสำคัญ</strong><small>แสดงเมื่อฐานข้อมูลมีข้อมูลผู้เล่นหรือเชื่อมแหล่งข้อมูลที่เชื่อถือได้</small></div></div></div></div></div>
+ <div class="card" style="margin-top:14px"><div class="card-head"><h2>🔎 สรุปสถานะข้อมูล</h2><span class="muted tiny">อ่านอย่างเดียว</span></div><div class="layout even"><div><div class="row-item"><span class="team-logo">🗃️</span><div class="row-main"><strong>ตาราง tickets</strong><small id="ticketsStatus">ยังไม่ได้อ่านข้อมูล</small></div></div><div class="row-item"><span class="team-logo">🏀</span><div class="row-main"><strong>ตาราง bets</strong><small id="betsStatus">ยังไม่ได้อ่านข้อมูล</small></div></div></div><div><div class="row-item"><span class="team-logo">🔐</span><div class="row-main"><strong>การเชื่อมต่อ</strong><small>ใช้ Publishable key เท่านั้น และต้องมี RLS policy ที่อนุญาต SELECT</small></div></div><div class="row-item"><span class="team-logo">🧠</span><div class="row-main"><strong>ข้อมูลผู้เล่น</strong><small id="impactStatus">แสดงตามข้อมูล player_impact ที่บันทึกไว้เท่านั้น</small></div></div></div></div></div>
 </section>
-<section class="view" id="view-history">
- <div class="card"><div class="card-head"><h2>🗓️ ประวัติบิล</h2><span id="historyCount" class="muted tiny">0 บิล</span></div><div class="filters"><input class="field" id="searchInput" placeholder="ค้นหา Ticket ID / ทีม / คู่แข่ง"><input class="field" id="dateInput" type="date" aria-label="เลือกวันที่"><select class="field" id="statusFilter"><option value="all">ทุกสถานะ</option><option value="won">ชนะ</option><option value="lost">แพ้</option><option value="push">เสมอ/คืนทุน</option><option value="pending">รอผล</option></select></div><div id="historyTickets" class="ticket-list"><div class="empty">ยังไม่มีบิลที่โหลดมา</div></div></div>
+
+<section class="view" id="view-tickets">
+ <div class="card"><div class="card-head"><h2>🗓️ ประวัติบิล</h2><span id="historyCount" class="muted tiny">0 บิล</span></div>
+  <div class="filters"><input class="field wide" id="searchInput" type="search" placeholder="ค้นหา Ticket / ทีม / คู่แข่ง" aria-label="ค้นหาบิล"><input class="field" id="dateInput" type="date" aria-label="วันที่บิล"><select class="field" id="statusFilter" aria-label="สถานะบิล"><option value="all">ทุกสถานะ</option><option value="won">ชนะ</option><option value="lost">แพ้</option><option value="push">เสมอ</option><option value="void">โมฆะ/คืนทุน</option><option value="partial">ได้บางส่วน</option><option value="pending">รอผล</option></select><button class="btn" id="clearTicketFilters" type="button">ล้างตัวกรอง</button></div>
+  <div id="historyTickets" class="ticket-list"><div class="empty">ยังไม่มีบิลที่โหลดมา</div></div></div>
 </section>
-<section class="view" id="view-teams">
- <div class="card"><div class="card-head"><h2>🏆 รายงานผลงานตามทีม</h2><span class="muted tiny">คำนวณจาก bets ที่โหลดได้</span></div><div id="teamReport"><div class="empty">เชื่อมต่อฐานข้อมูลเพื่อสร้างรายงานทีม</div></div><p class="notice">ชื่อทีมและผลลัพธ์อิงจากคอลัมน์ที่มีอยู่ในฐานข้อมูล หากไม่พบคอลัมน์ผลตัดสิน ระบบจะแสดงจำนวนเดิมพัน แต่จะไม่สรุปชนะ/แพ้เอง</p></div>
+
+<section class="view" id="view-games">
+ <div class="card"><div class="card-head"><h2>🏀 เกม &amp; ผลกระทบผู้เล่น</h2><span id="gamesCount" class="muted tiny">0 เกม</span></div>
+  <div class="filters"><input class="field wide" id="gameSearch" type="search" placeholder="ค้นหาทีม / ผู้เล่น / Ticket" aria-label="ค้นหาเกม"><input class="field" id="gameDate" type="date" aria-label="วันที่แข่ง"><select class="field" id="gameResult" aria-label="ผลเกม"><option value="all">ทุกผล</option><option value="won">ชนะ</option><option value="lost">แพ้</option><option value="push">เสมอ</option><option value="void">โมฆะ</option><option value="pending">รอผล</option></select><select class="field" id="gameImpact" aria-label="ข้อมูลผู้เล่น"><option value="all">ทุกเกม</option><option value="has">มีข้อมูลผู้เล่น</option><option value="none">ไม่มีข้อมูลผู้เล่น</option></select></div>
+  <div id="gameList" class="game-list"><div class="empty">เชื่อมต่อ Supabase เพื่อโหลดเกม</div></div>
+  <p class="notice">ข้อมูลผู้เล่นแสดงตามที่บันทึกใน player_impact เท่านั้น ระบบไม่สร้างสถานะผู้เล่น คะแนน หรือบทวิเคราะห์ขึ้นเอง</p></div>
 </section>
-<section class="view" id="view-spread">
- <div class="card"><div class="card-head"><h2>＋ วิเคราะห์แต้มต่อ</h2><span class="muted tiny">Handicap / Spread</span></div><div id="spreadReport"><div class="empty">ยังไม่มีข้อมูลแต้มต่อให้วิเคราะห์</div></div><p class="notice">ผลวิเคราะห์ขึ้นกับคอลัมน์แต้มต่อและผลตัดสินในฐานข้อมูล ไม่คำนวณผลแพ้ชนะจากราคาเพียงอย่างเดียว</p></div>
+
+<section class="view" id="view-analytics">
+ <div class="card"><div class="card-head"><h2>🎛️ ตัวกรองการวิเคราะห์</h2><button class="btn ghost sm" id="clearAnalyticsFilters" type="button">ล้างตัวกรอง</button></div>
+  <div class="filters"><label class="flabel">ตั้งแต่วันที่<input class="field" id="anFrom" type="date"></label><label class="flabel">ถึงวันที่<input class="field" id="anTo" type="date"></label><label class="flabel">ทีมที่เลือก<select class="field" id="anTeam"><option value="all">ทุกทีม</option></select></label><label class="flabel">ผลรายคู่<select class="field" id="anResult"><option value="all">ทุกผล</option><option value="won">ชนะ</option><option value="lost">แพ้</option><option value="push">เสมอ</option><option value="void">โมฆะ</option><option value="pending">รอผล</option></select></label></div>
+  <p class="notice" style="margin-top:0">ช่วงวันที่กรองตามวันแข่งของแต่ละคู่ และวันที่บิลสำหรับสรุปการเงิน</p></div>
+ <section class="stats" style="margin-top:14px">
+  <div class="stat"><label>คู่ที่ตรงตัวกรอง</label><strong id="anBets">0</strong><small id="anBetsSub">—</small></div>
+  <div class="stat"><label>อัตราชนะรายคู่</label><strong id="anWinRate">—</strong><small>ชนะ ÷ (ชนะ+แพ้)</small></div>
+  <div class="stat"><label>เงินเดิมพัน (บิล)</label><strong id="anStake">—</strong><small id="anTicketsSub">—</small></div>
+  <div class="stat"><label>กำไร / ขาดทุน (บิล)</label><strong id="anProfit">—</strong><small>บิลที่ตัดสินแล้ว</small></div>
+  <div class="stat"><label>ROI</label><strong id="anRoi">—</strong><small>กำไร ÷ เงินเดิมพันของบิลที่ตัดสินแล้ว</small></div>
+ </section>
+ <div class="card"><div class="card-head"><h2>⚖️ ต่อแต้ม vs รองแต้ม</h2><span class="muted tiny">แต้มต่อติดลบ = ทีมต่อ</span></div><div id="favDogReport" class="split"></div>
+  <div class="card-head" style="margin-top:4px"><h2>＋ วิเคราะห์ตามแต้มต่อ</h2><span class="muted tiny">Handicap / Spread</span></div><div id="spreadReport"><div class="empty">ยังไม่มีข้อมูลแต้มต่อให้วิเคราะห์</div></div></div>
+ <div class="card"><div class="card-head"><h2>🏆 ผลงานตามทีมที่เลือก</h2><span class="muted tiny">คำนวณจาก bets ที่โหลดได้</span></div><div id="teamReport"><div class="empty">เชื่อมต่อฐานข้อมูลเพื่อสร้างรายงานทีม</div></div>
+  <p class="notice">ผลรายคู่ใช้คอลัมน์ result ในฐานข้อมูลโดยตรง ไม่คำนวณแพ้ชนะจากคะแนนหรือราคาเอง · ตารางบิลเป็นแบบสเต็ป เงินเดิมพันและกำไรจึงสรุปที่ระดับบิล ไม่แบ่งลงรายทีม</p></div>
 </section>
-<section class="view" id="view-themes">
- <div class="card"><div class="card-head"><h2>🎨 เลือกธีม</h2><span class="muted tiny">บันทึกไว้ในอุปกรณ์นี้</span></div><div id="themeGrid" class="theme-grid"></div><p class="notice">ธีมเปลี่ยนเฉพาะหน้าตา ไม่กระทบข้อมูลใน Supabase</p></div>
-</section>
+
 <footer class="notice" style="text-align:center;margin:18px 0">NBA Bet Tracker · Personal use · Supabase REST API · Publishable key only</footer>
 </div>
-<nav class="bottom-nav"><button class="nav-item active" data-view="dashboard"><span>⌂</span>ภาพรวม</button><button class="nav-item" data-view="history"><span>▤</span>ประวัติ</button><button class="nav-item" data-view="teams"><span>♧</span>ทีม</button><button class="nav-item" data-view="spread"><span>＋</span>แต้มต่อ</button><button class="nav-item" data-view="themes"><span>✦</span>ธีม</button></nav>
-<div class="overlay" id="detailOverlay" aria-hidden="true"><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="grabber"></div><div class="sheet-head"><div><div class="eyebrow">TICKET DETAILS</div><h2 id="detailTitle">รายละเอียดบิล</h2><div class="muted tiny" id="detailSubtitle"></div></div><button class="close" id="closeDetail" aria-label="ปิด">×</button></div><div class="detail-grid" id="detailSummary"></div><div class="detail-section"><h3>🏀 รายการเดิมพันในบิล</h3><div class="leg-list" id="detailBets"></div></div><p class="notice">ข้อมูลผู้เล่นและผลการแข่งขันจะแสดงเท่าที่มีในฐานข้อมูลเท่านั้น ระบบไม่สร้างสถานะผู้เล่นหรือคะแนนปลอมขึ้นมาเอง</p></section></div>
-<div class="modal" id="settingsModal"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"><div class="card-head"><h2 id="settingsTitle">⚙️ ตั้งค่า Supabase</h2><button class="close" id="closeSettings">×</button></div><p class="muted tiny">ใส่ Project URL และ Publishable key (sb_publishable_...) เท่านั้น ห้ามใช้ secret/service_role key ใน HTML</p><div class="form-row"><label for="projectUrl">Project URL</label><input class="field" id="projectUrl" placeholder="https://your-project.supabase.co" autocomplete="url"></div><div class="form-row"><label for="publishableKey">Publishable key</label><input class="field" id="publishableKey" placeholder="sb_publishable_..." autocomplete="off" autocapitalize="off" spellcheck="false"></div><div class="form-row"><label for="ticketsTable">ชื่อตารางบิล</label><input class="field" id="ticketsTable" value="tickets"></div><div class="form-row"><label for="betsTable">ชื่อตารางคู่เดิมพัน</label><input class="field" id="betsTable" value="bets"></div><p class="notice">ค่าจะถูกบันทึกใน Local Storage ของเบราว์เซอร์นี้เพื่อความสะดวก ไม่ได้ส่งไปที่อื่นนอกจาก Supabase URL ที่ระบุ</p><div class="form-actions"><button class="btn" id="clearSettings">ล้างค่า</button><button class="btn primary" id="saveSettings">บันทึกและเชื่อมต่อ</button></div><div id="settingsStatus" class="statusline hidden"></div></section></div>
+<nav class="bottom-nav" aria-label="เมนูหลัก"><button class="nav-item active" data-view="dashboard"><span>⌂</span>ภาพรวม</button><button class="nav-item" data-view="tickets"><span>▤</span>บิล</button><button class="nav-item" data-view="games"><span>🏀</span>เกม/ผู้เล่น</button><button class="nav-item" data-view="analytics"><span>📊</span>วิเคราะห์</button></nav>
+
+<div class="overlay" id="detailOverlay" aria-hidden="true"><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="detailTitle"><div class="grabber"></div><div class="sheet-head"><div><div class="eyebrow">TICKET DETAILS</div><h2 id="detailTitle">รายละเอียดบิล</h2><div class="muted tiny" id="detailSubtitle"></div></div><button class="close" id="closeDetail" aria-label="ปิด">×</button></div><div class="detail-grid" id="detailSummary"></div><div class="detail-section"><h3>🏀 รายการเดิมพันในบิล</h3><div class="game-list" id="detailBets"></div></div><p class="notice">ข้อมูลผู้เล่นและผลการแข่งขันจะแสดงเท่าที่มีในฐานข้อมูลเท่านั้น ระบบไม่สร้างสถานะผู้เล่นหรือคะแนนปลอมขึ้นมาเอง</p></section></div>
+
+<div class="modal" id="settingsModal"><section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle"><div class="card-head"><h2 id="settingsTitle">⚙️ ตั้งค่า</h2><button class="close" id="closeSettings" aria-label="ปิด">×</button></div>
+ <h3 style="margin-top:4px">การเชื่อมต่อ Supabase</h3><p class="muted tiny">ใส่ Project URL และ Publishable key (sb_publishable_...) เท่านั้น ห้ามใช้ secret/service_role key ใน HTML</p>
+ <div class="form-row"><label for="projectUrl">Project URL</label><input class="field" id="projectUrl" placeholder="https://your-project.supabase.co" autocomplete="url"></div>
+ <div class="form-row"><label for="publishableKey">Publishable key</label><input class="field" id="publishableKey" placeholder="sb_publishable_..." autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+ <div class="form-row"><label for="ticketsTable">ชื่อตารางบิล</label><input class="field" id="ticketsTable" value="tickets"></div>
+ <div class="form-row"><label for="betsTable">ชื่อตารางคู่เดิมพัน</label><input class="field" id="betsTable" value="bets"></div>
+ <p class="notice">ค่าจะถูกบันทึกใน Local Storage ของเบราว์เซอร์นี้เพื่อความสะดวก ไม่ได้ส่งไปที่อื่นนอกจาก Supabase URL ที่ระบุ</p>
+ <div class="form-actions"><button class="btn" id="clearSettings">ล้างค่า</button><button class="btn primary" id="saveSettings">บันทึกและเชื่อมต่อ</button></div>
+ <div id="settingsStatus" class="statusline hidden"></div>
+ <h3>🎨 ธีม</h3><div id="themeGrid" class="theme-grid"></div><p class="notice">ธีมเปลี่ยนเฉพาะหน้าตาและบันทึกไว้ในอุปกรณ์นี้ ไม่กระทบข้อมูลใน Supabase</p>
+</section></div>
 <script>
 (function(){
 'use strict';
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 const themes=[
-{name:'1. Neon Court',bg:'#080d1d',panel:'#111a34',panel2:'#182747',line:'#2d3b61',text:'#f6f7ff',muted:'#a7b1d0',accent:'#ff4f91',accent2:'#ff9b52',good:'#45dfb0',bad:'#ff617b'},
-{name:'2. Midnight Blue',bg:'#071522',panel:'#0e2435',panel2:'#153249',line:'#25465d',text:'#edf8ff',muted:'#94b5c7',accent:'#31c8d8',accent2:'#71e6f0',good:'#48d9a7',bad:'#ff7185'},
-{name:'3. Black & Gold',bg:'#100f0c',panel:'#242116',panel2:'#302a19',line:'#6b562c',text:'#fff6df',muted:'#c5b996',accent:'#d8ad4b',accent2:'#f2d88e',good:'#62d5a0',bad:'#ff737b'},
-{name:'4. Clean Light',bg:'#f3f5fa',panel:'#ffffff',panel2:'#edf0f7',line:'#d9dfeb',text:'#172033',muted:'#69748a',accent:'#536de8',accent2:'#8e9cff',good:'#14865f',bad:'#d84359'},
-{name:'5. Forest Green',bg:'#081811',panel:'#10271d',panel2:'#193629',line:'#2c5942',text:'#effff4',muted:'#9abca8',accent:'#43c982',accent2:'#a1edac',good:'#70e2aa',bad:'#ff7788'},
-{name:'6. Sunset',bg:'#1b1016',panel:'#2b1822',panel2:'#3b202b',line:'#6a3544',text:'#fff3f1',muted:'#cba8ae',accent:'#ff785f',accent2:'#ffc078',good:'#64d9a5',bad:'#ff687e'},
-{name:'7. Royal Gold',bg:'#0b1020',panel:'#141f35',panel2:'#1b2a45',line:'#354764',text:'#f7f7fb',muted:'#a6b3c9',accent:'#c9a34b',accent2:'#f0d58b',good:'#4bd6a4',bad:'#ff7185'}
+{name:'1. Neon Court',bg:'#080d1d',panel:'#111a34',panel2:'#182747',line:'#2d3b61',text:'#f6f7ff',muted:'#a7b1d0',accent:'#ff4f91',accent2:'#ff9b52',good:'#45dfb0',bad:'#ff617b',on:'#1d0611'},
+{name:'2. Midnight Blue',bg:'#071522',panel:'#0e2435',panel2:'#153249',line:'#25465d',text:'#edf8ff',muted:'#94b5c7',accent:'#31c8d8',accent2:'#71e6f0',good:'#48d9a7',bad:'#ff7185',on:'#032026'},
+{name:'3. Black & Gold',bg:'#100f0c',panel:'#242116',panel2:'#302a19',line:'#6b562c',text:'#fff6df',muted:'#c5b996',accent:'#d8ad4b',accent2:'#f2d88e',good:'#62d5a0',bad:'#ff737b',on:'#17130a'},
+{name:'4. Clean Light',bg:'#f3f5fa',panel:'#ffffff',panel2:'#edf0f7',line:'#d9dfeb',text:'#172033',muted:'#69748a',accent:'#536de8',accent2:'#3d55c9',good:'#14865f',bad:'#d84359',on:'#ffffff'},
+{name:'5. Forest Green',bg:'#081811',panel:'#10271d',panel2:'#193629',line:'#2c5942',text:'#effff4',muted:'#9abca8',accent:'#43c982',accent2:'#a1edac',good:'#70e2aa',bad:'#ff7788',on:'#04170d'},
+{name:'6. Sunset',bg:'#1b1016',panel:'#2b1822',panel2:'#3b202b',line:'#6a3544',text:'#fff3f1',muted:'#cba8ae',accent:'#ff785f',accent2:'#ffc078',good:'#64d9a5',bad:'#ff687e',on:'#220b06'},
+{name:'7. Royal Gold',bg:'#0b1020',panel:'#141f35',panel2:'#1b2a45',line:'#354764',text:'#f7f7fb',muted:'#a6b3c9',accent:'#c9a34b',accent2:'#f0d58b',good:'#4bd6a4',bad:'#ff7185',on:'#17130a'},
+{name:'8. Navy Teal',bg:'#07111f',panel:'#0d1b2e',panel2:'#13253d',line:'#21364f',text:'#eef6fb',muted:'#93a8bf',accent:'#2dd4bf',accent2:'#7ee8da',good:'#3ddc97',bad:'#ff6b81',on:'#04201c'}
 ];
-let data={tickets:[],bets:[],ticketsOk:false,betsOk:false,usingDemo:false};
+const DEFAULT_THEME='8';
+let data={tickets:[],bets:[],ticketsOk:false,betsOk:false,loading:false,error:''};
 let config={url:'',key:'',ticketsTable:'tickets',betsTable:'bets'};
 let lastFocus=null;
+
+/* ---------- helpers ---------- */
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function money(v){const n=number(v);return n===null?'—':new Intl.NumberFormat('th-TH',{style:'currency',currency:'THB',minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}
+function signedMoney(v){const n=number(v);if(n===null)return '—';return (n>0?'+':'')+money(n)}
 function number(v){if(v===null||v===undefined||v==='')return null;const n=Number(String(v).replace(/[฿,\s]/g,''));return Number.isFinite(n)?n:null}
+function pct(v){return v===null||!Number.isFinite(v)?'—':(v*100).toFixed(1)+'%'}
 function first(obj,keys){for(const k of keys){if(obj&&obj[k]!==undefined&&obj[k]!==null&&obj[k]!=='')return obj[k]}return null}
+function toDate(v){if(!v)return '';const s=String(v);if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;const d=new Date(s);return Number.isNaN(+d)?s.slice(0,10):d.toISOString().slice(0,10)}
+function prettyDate(v){if(!v)return 'ไม่ระบุวันที่';const d=new Date(v+'T12:00:00');return Number.isNaN(+d)?v:d.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'})}
+function cls(n){return n>0?'positive':n<0?'negative':''}
+
+/* ---------- field mapping (tolerant to column names) ---------- */
 function ticketId(t){return String(first(t,['id','ticket_id','ticketid','uuid'])??'')}
 function betTicketId(b){return String(first(b,['ticket_id','ticketid','ticketId'])??'')}
-function ticketDate(t){const v=first(t,['bet_date','ticket_date','date','created_at','createdAt','placed_at']);if(!v)return '';const d=new Date(v);return Number.isNaN(+d)?String(v).slice(0,10):d.toISOString().slice(0,10)}
-function prettyDate(v){if(!v)return 'ไม่ระบุวันที่';const d=new Date(v+'T12:00:00');return Number.isNaN(+d)?v:d.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'})}
-function ticketName(t){return String(first(t,['ticket_name','name','ticket_id','id','ticket_code','code'])??'บิลไม่มีชื่อ')}
+function ticketDate(t){return toDate(first(t,['bet_date','ticket_date','date','created_at','createdAt','placed_at']))}
+function ticketName(t){return String(first(t,['ticket_code','ticket_name','name','code','ticket_id','id'])??'บิลไม่มีชื่อ')}
 function stake(t){return number(first(t,['stake','stake_amount','bet_amount','amount','wager','total_stake','investment']))}
-function payout(t){return number(first(t,['payout','potential_payout','possible_payout','return_amount','total_payout','to_win']))}
-function resultOf(o){const raw=String(first(o,['result','status','outcome','settlement','bet_result','ticket_status'])??'').toLowerCase();if(/won|win|ชนะ|ถูก/.test(raw))return 'won';if(/lost|lose|แพ้|ผิด/.test(raw))return 'lost';if(/push|draw|tie|void|refund|เสมอ|คืนทุน/.test(raw))return 'push';if(/pending|open|unsettled|รอ|live/.test(raw))return 'pending';return 'unknown'}
-function statusText(r){return ({won:'ชนะ',lost:'แพ้',push:'เสมอ/คืนทุน',pending:'รอผล',unknown:'ยังไม่ระบุผล'})[r]||'ยังไม่ระบุผล'}
-function statusForTicket(t,bs){const r=resultOf(t);if(r!=='unknown')return r;if(!bs.length)return 'unknown';const rs=bs.map(resultOf);if(rs.some(x=>x==='lost'))return 'lost';if(rs.every(x=>x==='won'))return 'won';if(rs.every(x=>x==='push'))return 'push';if(rs.some(x=>x==='pending')||rs.some(x=>x==='unknown'))return 'pending';return 'unknown'}
+function payout(t){return number(first(t,['payout_if_win','payout','potential_payout','possible_payout','return_amount','total_payout','to_win']))}
+function storedProfit(t){return number(first(t,['net_profit','profit','profit_loss','pnl']))}
+function resultOf(o){const raw=String(first(o,['result','status','outcome','settlement','bet_result','ticket_status'])??'').toLowerCase();
+ if(/partial|บางส่วน/.test(raw))return 'partial';
+ if(/won|win|ชนะ|ถูก/.test(raw))return 'won';
+ if(/lost|lose|แพ้|ผิด/.test(raw))return 'lost';
+ if(/void|refund|cancel|คืนทุน|โมฆะ/.test(raw))return 'void';
+ if(/push|draw|tie|เสมอ/.test(raw))return 'push';
+ if(/pending|open|unsettled|รอ|live/.test(raw))return 'pending';
+ return 'unknown'}
+const STATUS_TEXT={won:'ชนะ',lost:'แพ้',push:'เสมอ',void:'โมฆะ/คืนทุน',partial:'ได้บางส่วน',pending:'รอผล',unknown:'ยังไม่ระบุผล'};
+function statusText(r){return STATUS_TEXT[r]||STATUS_TEXT.unknown}
+function statusPill(r){const k=STATUS_TEXT[r]?r:'unknown';return `<span class="pill s-${k==='unknown'?'void':k}">${esc(statusText(k))}</span>`}
+function statusForTicket(t,bs){const r=resultOf(t);if(r!=='unknown')return r;if(!bs.length)return 'unknown';const rs=bs.map(resultOf);
+ if(rs.some(x=>x==='lost'))return 'lost';if(rs.every(x=>x==='won'))return 'won';
+ if(rs.some(x=>x==='pending'||x==='unknown'))return 'pending';
+ if(rs.every(x=>x==='void'))return 'void';if(rs.every(x=>x==='push'||x==='void'))return 'push';return 'unknown'}
+const SETTLED=['won','lost','push','void','partial'];
+/* Ticket profit: prefer the stored net_profit; otherwise the original rule (won = payout - stake, lost = -stake, push/void = 0). */
+function ticketProfit(t,r){if(!SETTLED.includes(r))return null;const np=storedProfit(t);if(np!==null)return np;const s=stake(t),p=payout(t);if(s===null)return null;if(r==='lost')return -s;if(r==='won')return p===null?null:p-s;if(r==='push'||r==='void')return 0;return null}
 function teamName(b){return String(first(b,['selected_team','team','team_name','pick','selection','home_team','away_team'])??'ไม่ระบุทีม')}
-function matchup(b){const explicit=first(b,['matchup','match','game','fixture','event_name']);if(explicit)return String(explicit);const home=first(b,['home_team','team_home']),away=first(b,['away_team','team_away','opponent']);if(home&&away)return home+' vs '+away;return String(first(b,['opponent','opponent_team','game_name'])??'คู่แข่งขันไม่ระบุ')}
+/* Analytics-only grouping: "Bucks" and "Milwaukee Bucks" count as one team. Stored names are never changed. */
+const NBA_TEAMS=['Atlanta Hawks','Boston Celtics','Brooklyn Nets','Charlotte Hornets','Chicago Bulls','Cleveland Cavaliers','Dallas Mavericks','Denver Nuggets','Detroit Pistons','Golden State Warriors','Houston Rockets','Indiana Pacers','LA Clippers','Los Angeles Lakers','Memphis Grizzlies','Miami Heat','Milwaukee Bucks','Minnesota Timberwolves','New Orleans Pelicans','New York Knicks','Oklahoma City Thunder','Orlando Magic','Philadelphia 76ers','Phoenix Suns','Portland Trail Blazers','Sacramento Kings','San Antonio Spurs','Toronto Raptors','Utah Jazz','Washington Wizards'];
+const TEAM_ALIAS=(()=>{const m=new Map();for(const full of NBA_TEAMS){const nick=full==='Portland Trail Blazers'?'Trail Blazers':full.split(' ').slice(-1)[0];m.set(full.toLowerCase(),full);m.set(nick.toLowerCase(),full)}m.set('los angeles clippers','LA Clippers');m.set('blazers','Portland Trail Blazers');m.set('sixers','Philadelphia 76ers');return m})();
+function canonicalTeam(name){const s=String(name??'').trim();return TEAM_ALIAS.get(s.toLowerCase())||s}
+function analyticsTeam(b){return canonicalTeam(teamName(b))}
+function opponentOf(b){return first(b,['opponent','opponent_team','away_team','team_away'])}
+function matchup(b){const explicit=first(b,['matchup','match','game','fixture','event_name']);if(explicit)return String(explicit);const home=first(b,['home_team','team_home']),away=first(b,['away_team','team_away']);if(home&&away)return home+' vs '+away;const opp=opponentOf(b);return opp?`${teamName(b)} vs ${opp}`:'คู่แข่งขันไม่ระบุ'}
 function handicap(b){return first(b,['handicap','spread','point_spread','line','selected_line','points','handicap_line'])}
+function fmtSpread(v){const n=number(v);if(n===null)return v===null?'—':String(v);return (n>0?'+':'')+String(n)}
 function odds(b){return first(b,['odds','price','decimal_odds','odd','coefficient'])}
-function betType(b){return first(b,['bet_type','market','market_type','wager_type','type'])??'ไม่ระบุประเภท'}
-function score(b){const s=first(b,['final_score','score','result_score','game_score']);if(s)return s;const h=first(b,['home_score','score_home']),a=first(b,['away_score','score_away']);return h!==null&&a!==null?`${h} - ${a}`:'—'}
-function playerInfo(b){const names=first(b,['key_players','important_players','players','player_names','player_name','star_players']);const status=first(b,['player_status','players_status','injury_status','availability']);const effect=first(b,['player_impact','impact_analysis','player_notes','injury_notes']);if(!names&&!status&&!effect)return null;return {names,status,effect}}
-function betsFor(t){const id=ticketId(t);return data.bets.filter(b=>betTicketId(b)===id||(t.ticket_id&&betTicketId(b)===String(t.ticket_id))||(t.id&&betTicketId(b)===String(t.id)))}
-function allTickets(){return [...data.tickets].sort((a,b)=>(ticketDate(b)||'').localeCompare(ticketDate(a)||''))}
+function score(b){const s=first(b,['final_score','score','result_score','game_score']);if(s)return String(s);
+ const ss=first(b,['selected_score']),os=first(b,['opponent_score']);if(ss!==null&&os!==null)return `${ss} - ${os}`;
+ const h=first(b,['home_score','score_home']),a=first(b,['away_score','score_away']);return h!==null&&a!==null?`${h} - ${a}`:'—'}
+function betsFor(t){const id=ticketId(t);return data.bets.filter(b=>betTicketId(b)===id||(t.ticket_id&&betTicketId(b)===String(t.ticket_id)))}
+function ticketOfBet(b){const id=betTicketId(b);return data.tickets.find(t=>ticketId(t)===id||(t.ticket_id&&String(t.ticket_id)===id))||null}
+function gameDate(b){return toDate(first(b,['game_date','match_date','date']))||(ticketOfBet(b)?ticketDate(ticketOfBet(b)):'')}
+function allTickets(){return [...data.tickets].sort((a,b)=>(ticketDate(b)||'').localeCompare(ticketDate(a)||'')||(number(ticketId(b))??0)-(number(ticketId(a))??0))}
+
+/* ---------- player impact (read-only; never written back) ---------- */
+const PI_KNOWN=['player','player_name','name','team','status','reason','impact','note','notes','report_date','date','source','url'];
+function normalizeImpact(raw){
+ let v=raw;
+ if(v===null||v===undefined)return [];
+ if(typeof v==='string'){const s=v.trim();if(!s||s==='null'||s==='[]'||s==='{}')return [];
+  if(/^[\[{"]/.test(s)){try{v=JSON.parse(s)}catch{return [{impact:s}]}}else return [{impact:s}]}
+ if(typeof v==='string')return v.trim()?[{impact:v}]:[];
+ if(Array.isArray(v))return v.flatMap(x=>{if(x===null||x===undefined||x==='')return [];if(typeof x==='object'&&!Array.isArray(x))return Object.keys(x).length?[x]:[];if(Array.isArray(x))return normalizeImpact(x);return [{impact:String(x)}]});
+ if(typeof v==='object'){const keys=Object.keys(v);if(!keys.length)return [];
+  if(keys.some(k=>PI_KNOWN.includes(k)))return [v];
+  /* map shape like {"Player A":"note"} */
+  return keys.map(k=>{const val=v[k];return val&&typeof val==='object'&&!Array.isArray(val)?{player:k,...val}:{player:k,impact:textOf(val)}})}
+ return [{impact:String(v)}]}
+function textOf(v){if(v===null||v===undefined)return '';if(typeof v==='object'){try{return JSON.stringify(v)}catch{return String(v)}}return String(v)}
+function impactEntries(b){return normalizeImpact(first(b,['player_impact','impact_analysis','player_notes','injury_notes']))}
+function sevClass(status){const s=String(status||'').toLowerCase();if(/\bout\b|ruled out|suspend|ไม่ลง|พักยาว/.test(s))return 'out';if(/question|doubt|game-time|probable|day-to-day|ไม่แน่นอน/.test(s))return 'q';if(/available|active|no injur|ไม่พบ|ลงได้|พร้อม/.test(s))return 'ok';return ''}
+function safeUrl(u){const s=String(u||'').trim();return /^https?:\/\/[^\s]+$/i.test(s)?s:''}
+function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,'')}catch{return 'แหล่งข้อมูล'}}
+function renderImpactEntry(e){
+ const player=first(e,['player','player_name','name']),team=first(e,['team']),status=first(e,['status']),reason=first(e,['reason']),impact=first(e,['impact','note','notes']),date=first(e,['report_date','date']),src=safeUrl(first(e,['source','url']));
+ const extra=Object.keys(e).filter(k=>!PI_KNOWN.includes(k)&&e[k]!==null&&e[k]!=='').map(k=>`${esc(k)}: ${esc(textOf(e[k]))}`);
+ const title=player?esc(textOf(player)):'<span class="muted">ไม่ระบุผู้เล่น</span>';
+ return `<div class="pi ${sevClass(status)}"><div class="pi-head"><div><strong>${title}</strong>${team?`<small>${esc(textOf(team))}</small>`:''}</div>${status?`<span class="pill">${esc(textOf(status))}</span>`:''}</div>${reason?`<p class="reason">สาเหตุ: ${esc(textOf(reason))}</p>`:''}${impact?`<p>${esc(textOf(impact))}</p>`:''}${extra.length?`<div class="pi-extra">${extra.join(' · ')}</div>`:''}${date||src?`<div class="pi-foot">${date?`<span>รายงาน ${esc(textOf(date))}</span>`:''}${src?`<a href="${esc(src)}" target="_blank" rel="noopener noreferrer">↗ ${esc(hostOf(src))}</a>`:''}</div>`:''}</div>`}
+function renderImpactBlock(b,open){const list=impactEntries(b);if(!list.length)return '<div class="no-impact">ไม่มีข้อมูลผู้เล่นที่บันทึกไว้สำหรับเกมนี้</div>';
+ const out=list.filter(e=>sevClass(first(e,['status']))==='out').length;
+ return `<details class="impact"${open?' open':''}><summary><span>⭐ ผลกระทบผู้เล่น · ${list.length} รายการ${out?` · ขาด ${out}`:''}</span></summary><div class="impact-list">${list.map(renderImpactEntry).join('')}</div></details>`}
+
+/* ---------- connection ---------- */
 function setStatus(message,type=''){const el=$('#connectionStatus');el.className='statusline '+(type==='ok'?'ok':type==='err'?'err':'');el.textContent=message}
 function setSettingsStatus(message,type=''){const el=$('#settingsStatus');el.className='statusline '+(type==='ok'?'ok':type==='err'?'err':'');el.textContent=message}
 function loadConfig(){try{const c=JSON.parse(localStorage.getItem('nbaTrackerConfig')||'{}');config={...config,...c}}catch{}$('#projectUrl').value=config.url||'';$('#publishableKey').value=config.key||'';$('#ticketsTable').value=config.ticketsTable||'tickets';$('#betsTable').value=config.betsTable||'bets'}
-function saveConfig(){config={url:$('#projectUrl').value.trim().replace(/\/+$/,''),key:$('#publishableKey').value.trim(),ticketsTable:$('#ticketsTable').value.trim()||'tickets',betsTable:$('#betsTable').value.trim()||'bets'};localStorage.setItem('nbaTrackerConfig',JSON.stringify(config))}
+function saveConfig(){config={url:$('#projectUrl').value.trim().replace(/\/+$/,''),key:$('#publishableKey').value.trim(),ticketsTable:$('#ticketsTable').value.trim()||'tickets',betsTable:$('#betsTable').value.trim()||'bets'};try{localStorage.setItem('nbaTrackerConfig',JSON.stringify(config))}catch{}}
 function validConfig(){return /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(config.url)&&/^sb_publishable_/.test(config.key)}
-async function api(table){const url=config.url+'/rest/v1/'+encodeURIComponent(table)+'?select=*&limit=1000';const r=await fetch(url,{headers:{apikey:config.key,Authorization:'Bearer '+config.key,Accept:'application/json'}});const txt=await r.text();let body;try{body=JSON.parse(txt)}catch{body=txt}if(!r.ok)throw new Error(`${table}: HTTP ${r.status} — ${body?.message||body?.hint||body?.error||txt||'Request failed'}`);if(!Array.isArray(body))throw new Error(`${table}: รูปแบบข้อมูลที่ได้รับไม่ใช่ array`);return body}
-async function connect({quiet=false}={}){if(!config.url||!config.key){setStatus('ยังไม่ได้ตั้งค่า Supabase · กด ⚙ เพื่อกรอก Project URL และ Publishable key');return}if(!validConfig()){setStatus('ตรวจรูปแบบ URL หรือ key อีกครั้ง · ต้องใช้ URL ของโปรเจกต์และ sb_publishable_... เท่านั้น','err');return}setStatus('กำลังอ่านข้อมูลจาก Supabase…');$('#refreshBtn').disabled=true;$('#heroRefresh').disabled=true;try{const results=await Promise.allSettled([api(config.ticketsTable),api(config.betsTable)]);const t=results[0],b=results[1];data.ticketsOk=t.status==='fulfilled';data.betsOk=b.status==='fulfilled';data.tickets=data.ticketsOk?t.value:[];data.bets=data.betsOk?b.value:[];const errors=results.filter(x=>x.status==='rejected').map(x=>x.reason.message);$('#ticketsStatus').textContent=data.ticketsOk?`อ่านสำเร็จ ${data.tickets.length} แถว`:`อ่านไม่สำเร็จ: ${errors.find(e=>e.startsWith(config.ticketsTable))||'ตรวจสอบ RLS/table'}`;$('#betsStatus').textContent=data.betsOk?`อ่านสำเร็จ ${data.bets.length} แถว`:`อ่านไม่สำเร็จ: ${errors.find(e=>e.startsWith(config.betsTable))||'ตรวจสอบ RLS/table'}`;if(data.ticketsOk&&data.betsOk){setStatus(`เชื่อมต่อสำเร็จ · tickets ${data.tickets.length} แถว · bets ${data.bets.length} แถว`, 'ok')}else{setStatus(errors.join(' | ')+' · ตรวจชื่อ table และ SELECT policy ของ RLS','err')}renderAll();if(!quiet&&results.every(x=>x.status==='fulfilled'))$('#settingsModal').classList.remove('open')}catch(e){setStatus('เชื่อมต่อไม่สำเร็จ: '+e.message,'err')}finally{$('#refreshBtn').disabled=false;$('#heroRefresh').disabled=false}}
-function renderStats(){const t=allTickets(),b=data.bets;$('#statTickets').textContent=t.length;$('#statBets').textContent=b.length;const stakes=t.map(stake).filter(v=>v!==null);$('#statStake').textContent=stakes.length?money(stakes.reduce((a,v)=>a+v,0)):'—';const settled=t.filter(x=>['won','lost','push'].includes(statusForTicket(x,betsFor(x))));let profit=0,valid=0;for(const x of settled){const s=stake(x),p=payout(x),r=statusForTicket(x,betsFor(x));if(s===null)continue;profit+=r==='won'&&p!==null?p-s:r==='lost'?-s:0;valid++}const el=$('#statProfit');el.textContent=valid?money(profit):'—';el.className=valid?(profit>0?'positive':profit<0?'negative':'') : '';el.title=valid?`คำนวณจากบิลที่ตัดสินแล้ว ${valid} บิล`:'ยังไม่มีผลตัดสินและยอดจ่ายที่อ่านได้ครบ'}
-function ticketCard(t){const bs=betsFor(t),r=statusForTicket(t,bs),s=stake(t),p=payout(t),id=ticketId(t)||ticketName(t);return `<button class="ticket" data-ticket="${esc(id)}"><span class="ticket-icon">🎟️</span><span class="ticket-main"><strong>${esc(ticketName(t))}</strong><small>${esc(prettyDate(ticketDate(t)))} · ${bs.length} คู่${first(t,['ticket_id','id'])?' · ID '+String(first(t,['ticket_id','id'])).slice(0,20):''}</small></span><span class="ticket-side"><strong>${s===null?'ยอดไม่ระบุ':esc(money(s))}</strong><span class="badge">${esc(statusText(r))}</span></span></button>`}
-function renderTickets(){const t=allTickets();$('#recentTickets').innerHTML=t.length?t.slice(0,5).map(ticketCard).join(''):'<div class="empty">ยังไม่มีบิลที่อ่านได้จาก Supabase<br>ตรวจชื่อ table และ RLS SELECT policy ได้ที่ ⚙</div>';const q=$('#searchInput').value.trim().toLowerCase(),date=$('#dateInput').value,filter=$('#statusFilter').value;const filtered=t.filter(x=>{const bs=betsFor(x),hay=[ticketName(x),ticketId(x),...bs.map(teamName),...bs.map(matchup)].join(' ').toLowerCase();return(!q||hay.includes(q))&&(!date||ticketDate(x)===date)&&(filter==='all'||statusForTicket(x,bs)===filter)});$('#historyCount').textContent=`${filtered.length} บิล`;$('#historyTickets').innerHTML=filtered.length?filtered.map(ticketCard).join(''):'<div class="empty">ไม่พบบิลตามเงื่อนไขที่เลือก</div>'}
-function renderChart(){const t=allTickets().slice(0,8).reverse();if(!t.length){$('#dailyChart').innerHTML='<div class="empty" style="width:100%">ยังไม่มีข้อมูลเพียงพอสำหรับกราฟ</div>';return}const values=t.map(x=>{const r=statusForTicket(x,betsFor(x)),s=stake(x),p=payout(x);if(s===null)return 0;if(r==='lost')return -s;if(r==='won'&&p!==null)return p-s;return 0});const max=Math.max(1,...values.map(Math.abs));$('#dailyChart').innerHTML=values.map((v,i)=>`<div class="bar" style="--h:${Math.max(4,Math.abs(v)/max*90)}%" data-label="${esc((ticketDate(t[i])||'').slice(5))}" title="${esc(money(v))}"></div>`).join('');}
-function renderTeams(){const map=new Map();for(const b of data.bets){const name=teamName(b),x=map.get(name)||{name,count:0,won:0,lost:0,push:0,unknown:0};x.count++;const r=resultOf(b);if(r==='won')x.won++;else if(r==='lost')x.lost++;else if(r==='push')x.push++;else x.unknown++;map.set(name,x)}const rows=[...map.values()].sort((a,b)=>b.count-a.count);$('#teamReport').innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>ทีมที่เลือก</th><th>เดิมพัน</th><th>ชนะ</th><th>แพ้</th><th>เสมอ/คืนทุน</th><th>รอผล/ไม่ระบุ</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.count}</td><td class="positive">${x.won}</td><td class="negative">${x.lost}</td><td>${x.push}</td><td>${x.unknown}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">ยังไม่มีข้อมูล bets หรือไม่พบชื่อทีมในคอลัมน์ที่รองรับ</div>'}
-function renderSpread(){const bs=data.bets.filter(b=>handicap(b)!==null);if(!bs.length){$('#spreadReport').innerHTML='<div class="empty">ไม่พบคอลัมน์แต้มต่อ เช่น handicap, spread, point_spread หรือ line ในข้อมูล bets</div>';return}const map=new Map();for(const b of bs){const h=String(handicap(b)),x=map.get(h)||{h,count:0,won:0,lost:0,push:0,unknown:0};x.count++;const r=resultOf(b);if(r==='won')x.won++;else if(r==='lost')x.lost++;else if(r==='push')x.push++;else x.unknown++;map.set(h,x)}$('#spreadReport').innerHTML=`<div class="table-wrap"><table><thead><tr><th>แต้มต่อ</th><th>จำนวน</th><th>ชนะ</th><th>แพ้</th><th>เสมอ</th><th>ยังไม่ทราบผล</th></tr></thead><tbody>${[...map.values()].sort((a,b)=>a.h.localeCompare(b.h,undefined,{numeric:true})).map(x=>`<tr><td>${esc(x.h)}</td><td>${x.count}</td><td class="positive">${x.won}</td><td class="negative">${x.lost}</td><td>${x.push}</td><td>${x.unknown}</td></tr>`).join('')}</tbody></table></div>`}
-function renderThemes(){const current=localStorage.getItem('nbaTrackerTheme')||'6';$('#themeGrid').innerHTML=themes.map((t,i)=>`<button class="theme-choice ${String(i+1)===current?'selected':''}" data-theme="${i+1}"><div class="swatch" style="background:linear-gradient(135deg,${t.accent},${t.bg})"></div><b>${esc(t.name)}</b><small>${i+1===7?'Gold / Navy':'Color preset'}</small></button>`).join('')}
-function applyTheme(n){const t=themes[Number(n)-1]||themes[6],root=document.documentElement;for(const k of ['bg','panel','panel2','line','text','muted','accent','accent2','good','bad'])root.style.setProperty('--'+k,t[k]);localStorage.setItem('nbaTrackerTheme',String(n));renderThemes()}
-function renderAll(){renderStats();renderTickets();renderChart();renderTeams();renderSpread();renderThemes()}
-function openTicket(id){const t=allTickets().find(x=>(ticketId(x)||ticketName(x))===id);if(!t)return;const bs=betsFor(t),r=statusForTicket(t,bs);$('#detailTitle').textContent=ticketName(t);$('#detailSubtitle').textContent=`${prettyDate(ticketDate(t))} · ${bs.length} คู่ · ${statusText(r)}`;const s=stake(t),p=payout(t);$('#detailSummary').innerHTML=`<div class="detail-box"><span>เงินเดิมพัน</span><strong>${s===null?'—':esc(money(s))}</strong></div><div class="detail-box"><span>ยอดจ่ายที่บันทึกไว้</span><strong>${p===null?'—':esc(money(p))}</strong></div><div class="detail-box"><span>Ticket ID</span><strong style="font-size:11px">${esc(ticketId(t)||'ไม่พบ ID')}</strong></div><div class="detail-box"><span>สถานะ</span><strong>${esc(statusText(r))}</strong></div>`;$('#detailBets').innerHTML=bs.length?bs.map((b,i)=>{const pl=playerInfo(b),rr=resultOf(b);return `<article class="leg"><button class="leg-button" aria-expanded="false"><span class="leg-icon">🏀</span><span class="leg-main"><strong>${esc(teamName(b))}</strong><small>${esc(matchup(b))}</small></span><span class="leg-price"><strong>${esc(odds(b)??'—')}</strong><small>${esc(statusText(rr))}</small></span></button><div class="leg-extra"><div class="leg-detail-grid"><div class="mini"><span>ทีมที่เลือก / แต้มต่อ</span><b>${esc(handicap(b)===null?'—':handicap(b))}</b></div><div class="mini"><span>ประเภทเดิมพัน</span><b>${esc(betType(b))}</b></div><div class="mini"><span>ผลการแข่งขัน</span><b>${esc(first(b,['result','status','outcome','settlement'])??'ยังไม่ระบุ')}</b></div><div class="mini"><span>คะแนนสุดท้าย</span><b>${esc(score(b))}</b></div></div><div class="player-panel"><strong>⭐ ผู้เล่นสำคัญ / ผลกระทบต่อเกม</strong><p>${pl?`ผู้เล่น: ${esc(pl.names??'ไม่ระบุ')}<br>สถานะ: ${esc(pl.status??'ไม่มีข้อมูล')}<br>หมายเหตุ: ${esc(pl.effect??'ไม่มีบทวิเคราะห์ในฐานข้อมูล')}`:'ยังไม่มีข้อมูลผู้เล่นสำคัญในตารางนี้ หากต้องการให้แสดง ต้องเพิ่มข้อมูลผู้เล่นที่ตรวจสอบแล้วลงในฐานข้อมูลหรือเชื่อม API แหล่งข้อมูลจริง'}</p></div></div></article>`}).join(''):'<div class="empty">ไม่พบแถวในตาราง bets ที่เชื่อมกับ Ticket ID นี้<br>ตรวจสอบว่า bets.ticket_id ตรงกับ tickets.id หรือ tickets.ticket_id</div>';$('#detailOverlay').classList.add('open');$('#detailOverlay').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';lastFocus=document.activeElement;$('#closeDetail').focus()}
-function closeTicket(){$('#detailOverlay').classList.remove('open');$('#detailOverlay').setAttribute('aria-hidden','true');document.body.style.overflow='';if(lastFocus)lastFocus.focus()}
-function switchView(name){$$('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===name));window.scrollTo({top:0,behavior:'smooth'})}
-function openSettings(){loadConfig();$('#settingsModal').classList.add('open')}
-$('#settingsBtn').addEventListener('click',openSettings);$('#closeSettings').addEventListener('click',()=>$('#settingsModal').classList.remove('open'));$('#saveSettings').addEventListener('click',()=>{saveConfig();setSettingsStatus('บันทึกแล้ว กำลังทดสอบการเชื่อมต่อ…');connect()});$('#clearSettings').addEventListener('click',()=>{localStorage.removeItem('nbaTrackerConfig');config={url:'',key:'',ticketsTable:'tickets',betsTable:'bets'};loadConfig();setSettingsStatus('ล้างการตั้งค่าจากอุปกรณ์นี้แล้ว')});
-$('#refreshBtn').addEventListener('click',()=>connect());$('#heroRefresh').addEventListener('click',()=>connect());$('#jumpHistory').addEventListener('click',()=>switchView('history'));$$('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));
-$('#searchInput').addEventListener('input',renderTickets);$('#dateInput').addEventListener('change',renderTickets);$('#statusFilter').addEventListener('change',renderTickets);
-document.addEventListener('click',e=>{const t=e.target.closest('[data-ticket]');if(t)openTicket(t.dataset.ticket);const th=e.target.closest('[data-theme]');if(th)applyTheme(th.dataset.theme);const leg=e.target.closest('.leg-button');if(leg){const card=leg.closest('.leg');card.classList.toggle('expanded');leg.setAttribute('aria-expanded',card.classList.contains('expanded')?'true':'false')}});
-$('#closeDetail').addEventListener('click',closeTicket);$('#detailOverlay').addEventListener('click',e=>{if(e.target===$('#detailOverlay'))closeTicket()});$('#settingsModal').addEventListener('click',e=>{if(e.target===$('#settingsModal'))$('#settingsModal').classList.remove('open')});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeTicket();$('#settingsModal').classList.remove('open')}});
-try{applyTheme(localStorage.getItem('nbaTrackerTheme')||'7')}catch{applyTheme('7')}renderAll();loadConfig();if(config.url&&config.key)connect({quiet:true});else setStatus('ยังไม่ได้เชื่อมต่อ Supabase · กด ⚙ เพื่อตั้งค่า Project URL และ Publishable key');
+/* For the default tickets table, request named columns so user_id is not downloaded to the browser. Custom table names keep select=*. */
+const TICKET_COLUMNS='id,ticket_code,bet_date,stake,payout_if_win,status,net_profit,created_at';
+async function api(table,columns='*'){const url=config.url+'/rest/v1/'+encodeURIComponent(table)+'?select='+encodeURIComponent(columns)+'&limit=1000';const r=await fetch(url,{headers:{apikey:config.key,Authorization:'Bearer '+config.key,Accept:'application/json'}});const txt=await r.text();let body;try{body=JSON.parse(txt)}catch{body=txt}if(!r.ok)throw new Error(`${table}: HTTP ${r.status} — ${body?.message||body?.hint||body?.error||txt||'Request failed'}`);if(!Array.isArray(body))throw new Error(`${table}: รูปแบบข้อมูลที่ได้รับไม่ใช่ array`);return body}
+async function loadTickets(){if(config.ticketsTable!=='tickets')return api(config.ticketsTable);try{return await api('tickets',TICKET_COLUMNS)}catch(e){if(/HTTP 400/.test(e.message))return api('tickets');throw e}}
+async function connect({quiet=false}={}){if(!config.url||!config.key){setStatus('ยังไม่ได้ตั้งค่า Supabase · กด ⚙ เพื่อกรอก Project URL และ Publishable key');return}if(!validConfig()){setStatus('ตรวจรูปแบบ URL หรือ key อีกครั้ง · ต้องใช้ URL ของโปรเจกต์และ sb_publishable_... เท่านั้น','err');return}
+ setStatus('กำลังอ่านข้อมูลจาก Supabase…');data.loading=true;data.error='';renderAll();$('#refreshBtn').disabled=true;$('#heroRefresh').disabled=true;
+ try{const results=await Promise.allSettled([loadTickets(),api(config.betsTable)]);const t=results[0],b=results[1];data.ticketsOk=t.status==='fulfilled';data.betsOk=b.status==='fulfilled';data.tickets=data.ticketsOk?t.value:[];data.bets=data.betsOk?b.value:[];const errors=results.filter(x=>x.status==='rejected').map(x=>x.reason.message);
+  $('#ticketsStatus').textContent=data.ticketsOk?`อ่านสำเร็จ ${data.tickets.length} แถว`:`อ่านไม่สำเร็จ: ${errors.find(e=>e.startsWith(config.ticketsTable))||'ตรวจสอบ RLS/table'}`;
+  $('#betsStatus').textContent=data.betsOk?`อ่านสำเร็จ ${data.bets.length} แถว`:`อ่านไม่สำเร็จ: ${errors.find(e=>e.startsWith(config.betsTable))||'ตรวจสอบ RLS/table'}`;
+  if(data.ticketsOk&&data.betsOk){setStatus(`เชื่อมต่อสำเร็จ · tickets ${data.tickets.length} แถว · bets ${data.bets.length} แถว`,'ok')}else{data.error=errors.join(' | ');setStatus(data.error+' · ตรวจชื่อ table และ SELECT policy ของ RLS','err')}
+  if(!quiet&&results.every(x=>x.status==='fulfilled'))$('#settingsModal').classList.remove('open')}
+ catch(e){data.error=e.message;setStatus('เชื่อมต่อไม่สำเร็จ: '+e.message,'err')}
+ finally{data.loading=false;renderAll();$('#refreshBtn').disabled=false;$('#heroRefresh').disabled=false}}
+function emptyState(msg){if(data.loading)return '<div class="empty"><span class="spinner"></span>กำลังโหลดข้อมูล…</div>';if(data.error&&!data.tickets.length&&!data.bets.length)return `<div class="empty">โหลดข้อมูลไม่สำเร็จ<br>${esc(data.error)}</div>`;return `<div class="empty">${msg}</div>`}
+
+/* ---------- dashboard ---------- */
+function renderStats(){const t=allTickets(),b=data.bets;$('#statTickets').textContent=t.length;$('#statBets').textContent=b.length;
+ const stakes=t.map(stake).filter(v=>v!==null);$('#statStake').textContent=stakes.length?money(stakes.reduce((a,v)=>a+v,0)):'—';
+ let profit=0,valid=0;for(const x of t){const p=ticketProfit(x,statusForTicket(x,betsFor(x)));if(p===null)continue;profit+=p;valid++}
+ const el=$('#statProfit');el.textContent=valid?signedMoney(profit):'—';el.className=valid?cls(profit):'';el.title=valid?`คำนวณจากบิลที่ตัดสินแล้ว ${valid} บิล`:'ยังไม่มีผลตัดสินและยอดที่อ่านได้ครบ';
+ const c=countResults(b);$('#statRecord').textContent=b.length?`${c.won}-${c.lost}-${c.push}`:'—';
+ const withImpact=b.filter(x=>impactEntries(x).length).length;$('#impactStatus').textContent=data.betsOk?`มีข้อมูลผู้เล่น ${withImpact} จาก ${b.length} คู่ · แสดงตามที่บันทึกไว้เท่านั้น`:'แสดงตามข้อมูล player_impact ที่บันทึกไว้เท่านั้น'}
+function renderChart(){const t=allTickets().slice(0,8).reverse();if(!t.length){$('#dailyChart').innerHTML=emptyState('ยังไม่มีข้อมูลเพียงพอสำหรับกราฟ').replace('class="empty"','class="empty" style="width:100%"');return}
+ const values=t.map(x=>ticketProfit(x,statusForTicket(x,betsFor(x)))??0);const max=Math.max(1,...values.map(Math.abs));
+ $('#dailyChart').innerHTML=values.map((v,i)=>{const h=Math.max(v===0?2:6,Math.abs(v)/max*100);const bar=`<div class="bar${v<0?' neg':''}" style="--h:${h}%"></div>`;return `<div class="bar-col" data-label="${esc((ticketDate(t[i])||'').slice(5))}" title="${esc(ticketName(t[i])+' · '+signedMoney(v))}"><div class="up">${v>=0?bar:''}</div><div class="down">${v<0?bar:''}</div></div>`}).join('')}
+
+/* ---------- tickets ---------- */
+function ticketCard(t){const bs=betsFor(t),r=statusForTicket(t,bs),s=stake(t),p=ticketProfit(t,r),id=ticketId(t)||ticketName(t);
+ return `<button class="ticket" data-ticket="${esc(id)}"><span class="ticket-icon">🎟️</span><span class="ticket-main"><strong>${esc(ticketName(t))}</strong><small>${esc(prettyDate(ticketDate(t)))} · ${bs.length} คู่</small></span><span class="ticket-side"><strong>${s===null?'ยอดไม่ระบุ':esc(money(s))}</strong>${p!==null?`<small class="${cls(p)}">${esc(signedMoney(p))}</small>`:''}${statusPill(r)}</span></button>`}
+function renderTickets(){const t=allTickets();$('#recentTickets').innerHTML=t.length?t.slice(0,5).map(ticketCard).join(''):emptyState('ยังไม่มีบิลที่อ่านได้จาก Supabase<br>ตรวจชื่อ table และ RLS SELECT policy ได้ที่ ⚙');
+ const q=$('#searchInput').value.trim().toLowerCase(),date=$('#dateInput').value,filter=$('#statusFilter').value;
+ const filtered=t.filter(x=>{const bs=betsFor(x),hay=[ticketName(x),ticketId(x),...bs.map(teamName),...bs.map(matchup)].join(' ').toLowerCase();return(!q||hay.includes(q))&&(!date||ticketDate(x)===date)&&(filter==='all'||statusForTicket(x,bs)===filter)});
+ $('#historyCount').textContent=`${filtered.length} บิล`;$('#historyTickets').innerHTML=filtered.length?filtered.map(ticketCard).join(''):(t.length?'<div class="empty">ไม่พบบิลตามเงื่อนไขที่เลือก</div>':emptyState('ยังไม่มีบิลที่โหลดมา'))}
+
+/* ---------- games & player impact ---------- */
+function gameCard(b,{showTicket=true,openImpact=false}={}){const r=resultOf(b),t=ticketOfBet(b),opp=opponentOf(b);
+ return `<article class="game"><div class="game-top"><div class="game-title"><strong>${esc(teamName(b))}${opp?` <span class="muted">vs</span> ${esc(opp)}`:''}</strong><small>${esc(prettyDate(gameDate(b)))}${showTicket&&t?` · บิล ${esc(ticketName(t))}`:''}${first(b,['reference_code'])?` · Ref ${esc(first(b,['reference_code']))}`:''}</small></div>${statusPill(r)}</div>
+ <div class="game-meta"><div class="mini"><span>แต้มต่อ (ทีมที่เลือก)</span><b>${esc(fmtSpread(handicap(b)))}</b></div><div class="mini"><span>ราคา</span><b>${esc(odds(b)??'—')}</b></div><div class="mini"><span>สกอร์ (เลือก - คู่แข่ง)</span><b>${esc(score(b))}</b></div><div class="mini"><span>ผล</span><b>${esc(statusText(r))}</b></div></div>
+ ${renderImpactBlock(b,openImpact)}</article>`}
+function renderGames(){const q=$('#gameSearch').value.trim().toLowerCase(),date=$('#gameDate').value,res=$('#gameResult').value,imp=$('#gameImpact').value;
+ const list=[...data.bets].sort((a,b)=>(gameDate(b)||'').localeCompare(gameDate(a)||'')||(number(b.id)??0)-(number(a.id)??0));
+ const filtered=list.filter(b=>{const ents=impactEntries(b);const t=ticketOfBet(b);
+  const hay=[teamName(b),opponentOf(b),t?ticketName(t):'',first(b,['reference_code']),...ents.map(e=>[first(e,['player','player_name','name']),first(e,['team'])].map(textOf).join(' '))].join(' ').toLowerCase();
+  return(!q||hay.includes(q))&&(!date||gameDate(b)===date)&&(res==='all'||resultOf(b)===res)&&(imp==='all'||(imp==='has'?ents.length>0:ents.length===0))});
+ $('#gamesCount').textContent=`${filtered.length} เกม`;
+ $('#gameList').innerHTML=filtered.length?filtered.map(b=>gameCard(b)).join(''):(list.length?'<div class="empty">ไม่พบเกมตามเงื่อนไขที่เลือก</div>':emptyState('ยังไม่มีข้อมูล bets'))}
+
+/* ---------- analytics ---------- */
+function countResults(bs){const c={won:0,lost:0,push:0,void:0,pending:0,partial:0,unknown:0};for(const b of bs){const r=resultOf(b);c[r in c?r:'unknown']++}return c}
+function winRate(c){const d=c.won+c.lost;return d?c.won/d:null}
+function rateCell(c){const w=winRate(c);return w===null?'<td class="num muted">—</td>':`<td class="num"><span class="rate">${pct(w)}<i><b style="--w:${(w*100).toFixed(0)}%"></b></i></span></td>`}
+function resultTable(rows,label){return `<div class="table-wrap"><table><thead><tr><th>${label}</th><th class="num">คู่</th><th class="num">ชนะ</th><th class="num">แพ้</th><th class="num">เสมอ</th><th class="num">โมฆะ</th><th class="num">รอผล</th><th class="num">อัตราชนะ</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${esc(x.label)}</td><td class="num">${x.n}</td><td class="num positive">${x.c.won}</td><td class="num negative">${x.c.lost}</td><td class="num">${x.c.push}</td><td class="num">${x.c.void}</td><td class="num">${x.c.pending+x.c.unknown+x.c.partial}</td>${rateCell(x.c)}</tr>`).join('')}</tbody></table></div>`}
+function groupBy(bs,keyFn){const m=new Map();for(const b of bs){const k=keyFn(b);if(!m.has(k))m.set(k,[]);m.get(k).push(b)}return [...m.entries()].map(([label,items])=>({label,n:items.length,c:countResults(items),items}))}
+function analyticsBets(){const from=$('#anFrom').value,to=$('#anTo').value,team=$('#anTeam').value,res=$('#anResult').value;
+ return data.bets.filter(b=>{const d=gameDate(b);return(!from||(d&&d>=from))&&(!to||(d&&d<=to))&&(team==='all'||analyticsTeam(b)===team)&&(res==='all'||resultOf(b)===res)})}
+function analyticsTickets(){const from=$('#anFrom').value,to=$('#anTo').value;return allTickets().filter(t=>{const d=ticketDate(t);return(!from||(d&&d>=from))&&(!to||(d&&d<=to))})}
+function fillTeamFilter(){const sel=$('#anTeam'),cur=sel.value;const teams=[...new Set(data.bets.map(analyticsTeam))].sort((a,b)=>a.localeCompare(b));sel.innerHTML='<option value="all">ทุกทีม</option>'+teams.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');sel.value=teams.includes(cur)?cur:'all'}
+function renderAnalytics(){fillTeamFilter();const bs=analyticsBets(),c=countResults(bs);
+ $('#anBets').textContent=bs.length;$('#anBetsSub').textContent=bs.length?`ชนะ ${c.won} · แพ้ ${c.lost} · เสมอ ${c.push} · โมฆะ ${c.void} · รอ ${c.pending+c.unknown}`:'—';
+ $('#anWinRate').textContent=pct(winRate(c));
+ const ts=analyticsTickets();let stakeAll=0,stakeSettled=0,profit=0,settled=0;for(const t of ts){const s=stake(t);if(s!==null)stakeAll+=s;const p=ticketProfit(t,statusForTicket(t,betsFor(t)));if(p!==null){profit+=p;settled++;if(s!==null)stakeSettled+=s}}
+ $('#anStake').textContent=ts.length?money(stakeAll):'—';$('#anTicketsSub').textContent=`${ts.length} บิล · ตัดสินแล้ว ${settled}`;
+ const pe=$('#anProfit');pe.textContent=settled?signedMoney(profit):'—';pe.className=settled?cls(profit):'';
+ const roi=settled&&stakeSettled?profit/stakeSettled:null;const re=$('#anRoi');re.textContent=pct(roi);re.className=roi===null?'':cls(roi);
+ const empty=emptyState(data.bets.length?'ไม่มีข้อมูลตามตัวกรองที่เลือก':'ยังไม่มีข้อมูล bets');
+ if(!bs.length){$('#teamReport').innerHTML=empty;$('#spreadReport').innerHTML=empty;$('#favDogReport').innerHTML='';return}
+ const teams=groupBy(bs,analyticsTeam).sort((a,b)=>b.n-a.n||a.label.localeCompare(b.label));$('#teamReport').innerHTML=resultTable(teams,'ทีมที่เลือก');
+ const withSpread=bs.filter(b=>handicap(b)!==null);
+ if(withSpread.length){const spreads=groupBy(withSpread,b=>String(handicap(b))).sort((a,b)=>(number(a.label)??0)-(number(b.label)??0));spreads.forEach(x=>x.label=fmtSpread(x.label));$('#spreadReport').innerHTML=resultTable(spreads,'แต้มต่อ')}
+ else $('#spreadReport').innerHTML='<div class="empty">ไม่พบคอลัมน์แต้มต่อ เช่น handicap, spread, point_spread หรือ line ในข้อมูล bets</div>';
+ const fav=withSpread.filter(b=>number(handicap(b))<0),dog=withSpread.filter(b=>number(handicap(b))>0),pk=withSpread.filter(b=>number(handicap(b))===0);
+ const tile=(label,items)=>{const cc=countResults(items);return `<div class="stat"><label>${label}</label><strong>${pct(winRate(cc))}</strong><small>${items.length} คู่ · ${cc.won}-${cc.lost}-${cc.push}</small></div>`};
+ $('#favDogReport').innerHTML=withSpread.length?tile('ทีมต่อ (−)',fav)+tile('ทีมรอง (+)',dog)+(pk.length?tile('เสมอแต้ม (0)',pk):''):''}
+
+/* ---------- themes ---------- */
+function currentTheme(){try{return localStorage.getItem('nbaTrackerTheme')||DEFAULT_THEME}catch{return DEFAULT_THEME}}
+function renderThemes(){const current=currentTheme();$('#themeGrid').innerHTML=themes.map((t,i)=>`<button class="theme-choice ${String(i+1)===current?'selected':''}" data-theme="${i+1}" type="button"><div class="swatch" style="background:linear-gradient(135deg,${t.accent},${t.bg})"></div><b>${esc(t.name)}</b><small>${i+1===8?'ค่าเริ่มต้น':'Color preset'}</small></button>`).join('')}
+function applyTheme(n){const t=themes[Number(n)-1]||themes[Number(DEFAULT_THEME)-1],root=document.documentElement;for(const k of ['bg','panel','panel2','line','text','muted','accent','accent2','good','bad'])root.style.setProperty('--'+k,t[k]);root.style.setProperty('--on-accent',t.on||'#0b1220');root.style.colorScheme=t.bg==='#f3f5fa'?'light':'dark';const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t.bg;try{localStorage.setItem('nbaTrackerTheme',String(n))}catch{}renderThemes()}
+
+/* ---------- detail sheet ---------- */
+function openTicket(id){const t=allTickets().find(x=>(ticketId(x)||ticketName(x))===id);if(!t)return;const bs=betsFor(t),r=statusForTicket(t,bs);
+ $('#detailTitle').textContent=ticketName(t);$('#detailSubtitle').textContent=`${prettyDate(ticketDate(t))} · ${bs.length} คู่ · ${statusText(r)}`;
+ const s=stake(t),p=payout(t),np=ticketProfit(t,r);
+ $('#detailSummary').innerHTML=`<div class="detail-box"><span>เงินเดิมพัน</span><strong>${s===null?'—':esc(money(s))}</strong></div><div class="detail-box"><span>ยอดจ่ายหากชนะ</span><strong>${p===null?'—':esc(money(p))}</strong></div><div class="detail-box"><span>กำไร / ขาดทุน</span><strong class="${np===null?'':cls(np)}">${np===null?'—':esc(signedMoney(np))}</strong></div><div class="detail-box"><span>สถานะ</span><strong>${statusPill(r)}</strong></div>`;
+ const sorted=[...bs].sort((a,b)=>(gameDate(a)||'').localeCompare(gameDate(b)||'')||(number(a.id)??0)-(number(b.id)??0));
+ $('#detailBets').innerHTML=sorted.length?sorted.map(b=>gameCard(b,{showTicket:false})).join(''):'<div class="empty">ไม่พบแถวในตาราง bets ที่เชื่อมกับ Ticket ID นี้<br>ตรวจสอบว่า bets.ticket_id ตรงกับ tickets.id</div>';
+ $('#detailOverlay').classList.add('open');$('#detailOverlay').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';lastFocus=document.activeElement;$('#closeDetail').focus()}
+function closeTicket(){if(!$('#detailOverlay').classList.contains('open'))return;$('#detailOverlay').classList.remove('open');$('#detailOverlay').setAttribute('aria-hidden','true');document.body.style.overflow='';if(lastFocus)lastFocus.focus()}
+
+/* ---------- navigation ---------- */
+const VIEWS=['dashboard','tickets','games','analytics'];
+const LEGACY={history:'tickets',teams:'analytics',spread:'analytics',themes:'dashboard'};
+function switchView(name,{scroll=true}={}){name=LEGACY[name]||name;if(!VIEWS.includes(name))name='dashboard';$$('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));$$('[data-view]').forEach(b=>{const on=b.dataset.view===name;b.classList.toggle('active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});if(scroll)window.scrollTo({top:0,behavior:'smooth'})}
+function openSettings(){loadConfig();renderThemes();$('#settingsModal').classList.add('open')}
+function renderAll(){renderStats();renderTickets();renderChart();renderGames();renderAnalytics();renderThemes()}
+
+$('#settingsBtn').addEventListener('click',openSettings);$('#closeSettings').addEventListener('click',()=>$('#settingsModal').classList.remove('open'));
+$('#saveSettings').addEventListener('click',()=>{saveConfig();setSettingsStatus('บันทึกแล้ว กำลังทดสอบการเชื่อมต่อ…');connect()});
+$('#clearSettings').addEventListener('click',()=>{try{localStorage.removeItem('nbaTrackerConfig')}catch{}config={url:'',key:'',ticketsTable:'tickets',betsTable:'bets'};loadConfig();setSettingsStatus('ล้างการตั้งค่าจากอุปกรณ์นี้แล้ว')});
+$('#refreshBtn').addEventListener('click',()=>connect());$('#heroRefresh').addEventListener('click',()=>connect());
+$$('[data-view]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.goto)));
+['#searchInput'].forEach(s=>$(s).addEventListener('input',renderTickets));['#dateInput','#statusFilter'].forEach(s=>$(s).addEventListener('change',renderTickets));
+$('#clearTicketFilters').addEventListener('click',()=>{$('#searchInput').value='';$('#dateInput').value='';$('#statusFilter').value='all';renderTickets()});
+$('#gameSearch').addEventListener('input',renderGames);['#gameDate','#gameResult','#gameImpact'].forEach(s=>$(s).addEventListener('change',renderGames));
+['#anFrom','#anTo','#anTeam','#anResult'].forEach(s=>$(s).addEventListener('change',renderAnalytics));
+$('#clearAnalyticsFilters').addEventListener('click',()=>{['#anFrom','#anTo'].forEach(s=>$(s).value='');$('#anTeam').value='all';$('#anResult').value='all';renderAnalytics()});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-ticket]');if(t)openTicket(t.dataset.ticket);const th=e.target.closest('[data-theme]');if(th)applyTheme(th.dataset.theme)});
+$('#closeDetail').addEventListener('click',closeTicket);$('#detailOverlay').addEventListener('click',e=>{if(e.target===$('#detailOverlay'))closeTicket()});
+$('#settingsModal').addEventListener('click',e=>{if(e.target===$('#settingsModal'))$('#settingsModal').classList.remove('open')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeTicket();$('#settingsModal').classList.remove('open')}});
+
+/* One-time move to the new Navy Teal default; any theme picked afterwards is kept. */
+try{if(!localStorage.getItem('nbaTrackerThemeV2')){localStorage.setItem('nbaTrackerTheme',DEFAULT_THEME);localStorage.setItem('nbaTrackerThemeV2','1')}}catch{}
+applyTheme(currentTheme());renderAll();loadConfig();
+if(config.url&&config.key)connect({quiet:true});else setStatus('ยังไม่ได้เชื่อมต่อ Supabase · กด ⚙ เพื่อตั้งค่า Project URL และ Publishable key');
 })();
 </script>
 </body>
