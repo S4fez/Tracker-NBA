@@ -107,6 +107,12 @@ details.impact[open]>summary:after{transform:rotate(180deg)}
 .impact-list{display:grid;gap:8px;padding:0 10px 10px}
 .pi{border:1px solid var(--line);border-left:3px solid var(--line);border-radius:10px;padding:10px 11px;background:var(--panel2);min-width:0}
 .pi.out{border-left-color:var(--bad)}.pi.q{border-left-color:var(--warn)}.pi.ok{border-left-color:var(--good)}
+.pi.inj{border-left-color:#ff9f5a}.pi.ej{border-left-color:#c4a7ff}.pi.unv{border-left-style:dashed;border-left-color:var(--muted)}
+.pi-badges{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.pi p b{color:var(--text);font-weight:700}
+.pi .pi-stale{color:var(--warn);font-size:11px}
+.s-inj{color:#ff9f5a;border-color:#ff9f5a66;background:#ff9f5a14}
+.pi-warn{margin-top:10px;font-size:11px;color:var(--warn);border:1px dashed color-mix(in srgb,var(--warn) 50%,transparent);border-radius:10px;padding:8px 10px}
 .pi-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
 .pi-head strong{font-size:12.5px;overflow-wrap:anywhere}.pi-head small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
 .pi p{margin:6px 0 0;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
@@ -325,33 +331,87 @@ function ticketOfBet(b){const id=betTicketId(b);return data.tickets.find(t=>tick
 function gameDate(b){return toDate(first(b,['game_date','match_date','date']))||(ticketOfBet(b)?ticketDate(ticketOfBet(b)):'')}
 function allTickets(){return [...data.tickets].sort((a,b)=>(ticketDate(b)||'').localeCompare(ticketDate(a)||'')||(number(ticketId(b))??0)-(number(ticketId(a))??0))}
 
-/* ---------- player impact (read-only; never written back) ---------- */
-const PI_KNOWN=['player','player_name','name','team','status','reason','impact','note','notes','report_date','date','source','url'];
-function normalizeImpact(raw){
- let v=raw;
- if(v===null||v===undefined)return [];
- if(typeof v==='string'){const s=v.trim();if(!s||s==='null'||s==='[]'||s==='{}')return [];
-  if(/^[\[{"]/.test(s)){try{v=JSON.parse(s)}catch{return [{impact:s}]}}else return [{impact:s}]}
- if(typeof v==='string')return v.trim()?[{impact:v}]:[];
- if(Array.isArray(v))return v.flatMap(x=>{if(x===null||x===undefined||x==='')return [];if(typeof x==='object'&&!Array.isArray(x))return Object.keys(x).length?[x]:[];if(Array.isArray(x))return normalizeImpact(x);return [{impact:String(x)}]});
- if(typeof v==='object'){const keys=Object.keys(v);if(!keys.length)return [];
-  if(keys.some(k=>PI_KNOWN.includes(k)))return [v];
-  /* map shape like {"Player A":"note"} */
-  return keys.map(k=>{const val=v[k];return val&&typeof val==='object'&&!Array.isArray(val)?{player:k,...val}:{player:k,impact:textOf(val)}})}
- return [{impact:String(v)}]}
-function textOf(v){if(v===null||v===undefined)return '';if(typeof v==='object'){try{return JSON.stringify(v)}catch{return String(v)}}return String(v)}
+/* ---------- player impact (read-only; never written back) ----------
+   bets.player_impact arrives in several shapes; all are normalised into one array of event objects here:
+     {"events":[{...}, ...]}            current format
+     [{...}, ...]                        legacy array of events
+     '{"events":[...]}' / '[...]'        the same, stored or returned as a JSON string
+     {"player":..., ...}                 a single event object
+     {"Player A":"note", ...}            legacy name -> note map
+     "free text"                         legacy plain-text note
+     null / "" / [] / {}                 no data
+   Malformed JSON is reported as unreadable, never shown as text. Event fields are kept as stored (including unknown ones);
+   nothing here edits the record or writes anything back to Supabase. */
+const PI_FIELDS=['player','player_name','name','team','status','event_type','reason','impact','note','notes','report_date','date','source','url'];
+const PI_WRAPPER='events';
+function isPlainObj(v){return v!==null&&typeof v==='object'&&!Array.isArray(v)}
+function blank(v){return v===null||v===undefined||(typeof v==='string'&&!v.trim())}
+function looksLikeEvent(o){return PI_FIELDS.some(k=>k in o)}
+function hasContent(o){return Object.keys(o).some(k=>!blank(o[k])&&!(Array.isArray(o[k])&&!o[k].length)&&!(isPlainObj(o[k])&&!Object.keys(o[k]).length))}
+function parseImpact(raw,depth=0){
+ const out={events:[],malformed:false,notes:[]};
+ const merge=r=>{out.events.push(...r.events);out.notes.push(...r.notes);if(r.malformed)out.malformed=true};
+ if(depth>5||raw===null||raw===undefined)return out;
+ if(typeof raw==='string'){const s=raw.trim();if(!s||s==='null'||s==='[]'||s==='{}'||s==='""')return out;
+  if(/^[\[{"]/.test(s)){let v;try{v=JSON.parse(s)}catch{out.malformed=true;return out}merge(parseImpact(v,depth+1));return out}
+  out.events.push({impact:s});return out}
+ if(typeof raw==='number'||typeof raw==='boolean'){out.events.push({impact:String(raw)});return out}
+ if(Array.isArray(raw)){for(const x of raw){if(isPlainObj(x)&&looksLikeEvent(x)){if(hasContent(x))out.events.push(x)}else merge(parseImpact(x,depth+1))}return out}
+ if(!isPlainObj(raw))return out;
+ const keys=Object.keys(raw);if(!keys.length)return out;
+ if(PI_WRAPPER in raw){const ev=raw[PI_WRAPPER];
+  if(ev===null||ev===undefined||Array.isArray(ev)||isPlainObj(ev)||typeof ev==='string')merge(parseImpact(ev,depth+1));else out.malformed=true;
+  for(const k of keys)if(k!==PI_WRAPPER&&!blank(raw[k]))out.notes.push({key:k,value:raw[k]});
+  return out}
+ if(looksLikeEvent(raw)){if(hasContent(raw))out.events.push(raw);return out}
+ /* legacy {"Player A":"note"} map */
+ for(const k of keys){const v=raw[k];if(blank(v))continue;
+  if(isPlainObj(v))out.events.push(looksLikeEvent(v)?{player:k,...v}:{player:k,details:v});
+  else if(Array.isArray(v))merge(parseImpact(v,depth+1));
+  else out.events.push({player:k,impact:String(v)})}
+ return out}
+function normalizeImpact(raw){return parseImpact(raw).events}
+/* Human-readable text for any stored value. Objects and arrays become "label: value" text, never JSON. */
+function humanKey(k){return String(k).replace(/_/g,' ')}
+function textOf(v,depth=0){if(v===null||v===undefined)return '';if(typeof v!=='object')return String(v);if(depth>2)return '…';
+ if(Array.isArray(v))return v.map(x=>textOf(x,depth+1)).filter(Boolean).join(', ');
+ return Object.keys(v).filter(k=>!blank(v[k])).map(k=>`${humanKey(k)}: ${textOf(v[k],depth+1)}`).join(' · ')}
 function impactEntries(b){return normalizeImpact(first(b,['player_impact','impact_analysis','player_notes','injury_notes']))}
-function sevClass(status){const s=String(status||'').toLowerCase();if(/\bout\b|ruled out|suspend|ไม่ลง|พักยาว/.test(s))return 'out';if(/question|doubt|game-time|probable|day-to-day|ไม่แน่นอน/.test(s))return 'q';if(/available|active|no injur|ไม่พบ|ลงได้|พร้อม/.test(s))return 'ok';return ''}
-function safeUrl(u){const s=String(u||'').trim();return /^https?:\/\/[^\s]+$/i.test(s)?s:''}
+const EVENT_TYPES={pre_game_absence:{label:'ขาดก่อนเกม',sev:'out'},pre_game_questionable:{label:'ไม่แน่นอนก่อนเกม',sev:'q'},injury_during_game:{label:'บาดเจ็บระหว่างเกม',sev:'inj'},ejection:{label:'ถูกไล่ออกจากเกม',sev:'ej'},returned:{label:'กลับมาลงเล่น',sev:'ok'},return:{label:'กลับมาลงเล่น',sev:'ok'}};
+const SEV_PILL={out:'s-lost',q:'s-pending',ok:'s-won',inj:'s-inj',ej:'s-partial',unv:'s-void'};
+/* Colour only; the stored status text is always shown as-is. Classified on the first part of e.g. "Questionable / Out in team preview". */
+function sevClass(status){const s=String(status||'').toLowerCase().trim();if(!s)return '';
+ if(/ไม่บันทึกเป็นข้อเท็จจริง|ยังไม่มีข้อมูลยืนยัน|ต้องยืนยัน|unverified|unconfirmed/.test(s))return 'unv';
+ if(/eject|ไล่ออก/.test(s))return 'ej';
+ if(/during (the )?game|left (the )?game|ออกระหว่างเกม|บาดเจ็บระหว่างเกม/.test(s))return 'inj';
+ const lead=s.split('/')[0];
+ if(/return|available|\bactive\b|no injur|ไม่พบ|ลงได้|พร้อม|กลับมา/.test(lead))return 'ok';
+ if(/question|doubt|game-time|probable|day-to-day|ไม่แน่นอน/.test(lead))return 'q';
+ if(/\bout\b|ruled out|suspend|ไม่ลง|พักยาว/.test(lead))return 'out';
+ return ''}
+function eventKind(e){const t=String(first(e,['event_type'])??'').trim();if(!t)return null;const k=EVENT_TYPES[t.toLowerCase()];return k||{label:humanKey(t),sev:''}}
+function safeUrl(u){const s=String(u||'').trim();if(!/^https?:\/\/[^\s"'<>]+$/i.test(s))return '';try{const p=new URL(s);return /^https?:$/.test(p.protocol)?p.href:''}catch{return ''}}
 function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,'')}catch{return 'แหล่งข้อมูล'}}
-function renderImpactEntry(e){
- const player=first(e,['player','player_name','name']),team=first(e,['team']),status=first(e,['status']),reason=first(e,['reason']),impact=first(e,['impact','note','notes']),date=first(e,['report_date','date']),src=safeUrl(first(e,['source','url']));
- const extra=Object.keys(e).filter(k=>!PI_KNOWN.includes(k)&&e[k]!==null&&e[k]!=='').map(k=>`${esc(k)}: ${esc(textOf(e[k]))}`);
- const title=player?esc(textOf(player)):'<span class="muted">ไม่ระบุผู้เล่น</span>';
- return `<div class="pi ${sevClass(status)}"><div class="pi-head"><div><strong>${title}</strong>${team?`<small>${esc(textOf(team))}</small>`:''}</div>${status?`<span class="pill">${esc(textOf(status))}</span>`:''}</div>${reason?`<p class="reason">สาเหตุ: ${esc(textOf(reason))}</p>`:''}${impact?`<p>${esc(textOf(impact))}</p>`:''}${extra.length?`<div class="pi-extra">${extra.join(' · ')}</div>`:''}${date||src?`<div class="pi-foot">${date?`<span>รายงาน ${esc(textOf(date))}</span>`:''}${src?`<a href="${esc(src)}" target="_blank" rel="noopener noreferrer">↗ ${esc(hostOf(src))}</a>`:''}</div>`:''}</div>`}
-function renderImpactBlock(b,open){const list=impactEntries(b);if(!list.length)return '<div class="no-impact">ไม่มีข้อมูลผู้เล่นที่บันทึกไว้สำหรับเกมนี้</div>';
- const out=list.filter(e=>sevClass(first(e,['status']))==='out').length;
- return `<details class="impact"${open?' open':''}><summary><span>⭐ ผลกระทบผู้เล่น · ${list.length} รายการ${out?` · ขาด ${out}`:''}</span></summary><div class="impact-list">${list.map(renderImpactEntry).join('')}</div></details>`}
+function daysBetween(a,b){if(!/^\d{4}-\d{2}-\d{2}$/.test(a||'')||!/^\d{4}-\d{2}-\d{2}$/.test(b||''))return null;return Math.round((Date.parse(b+'T00:00:00Z')-Date.parse(a+'T00:00:00Z'))/864e5)}
+function teamLabel(t){const s=textOf(t);return s==='data_quality'?'หมายเหตุคุณภาพข้อมูล':s}
+function renderImpactEntry(e,gDate){
+ const player=first(e,['player','player_name','name']),team=first(e,['team']),status=first(e,['status']),reason=first(e,['reason']),impact=first(e,['impact','note','notes']);
+ const date=first(e,['report_date','date']),rawSrc=first(e,['source','url']),src=safeUrl(rawSrc),kind=eventKind(e),stSev=sevClass(status);
+ const sev=String(team)==='data_quality'?'unv':(kind&&kind.sev)||stSev;
+ const extra=Object.keys(e).filter(k=>!PI_FIELDS.includes(k)&&!blank(e[k])).map(k=>`${esc(humanKey(k))}: ${esc(textOf(e[k]))}`).filter(x=>x);
+ const title=blank(player)?'<span class="muted">ไม่ระบุผู้เล่น</span>':esc(textOf(player));
+ const dateTxt=textOf(date),gap=daysBetween(dateTxt.slice(0,10),gDate||'');
+ const stale=gap!==null&&gap>1?`<p class="pi-stale">รายงานก่อนวันแข่ง ${gap} วัน · ไม่ใช่การยืนยันสถานะในเกมนี้</p>`:'';
+ const badges=(kind?`<span class="pill ${SEV_PILL[kind.sev]||''}">${esc(kind.label)}</span>`:'')+(blank(status)?'':`<span class="pill ${SEV_PILL[stSev]||''}">${esc(textOf(status))}</span>`);
+ const srcHtml=src?`<a href="${esc(src)}" target="_blank" rel="noopener noreferrer">↗ ${esc(hostOf(src))}</a>`:(blank(rawSrc)?'':'<span>แหล่งข้อมูล: ลิงก์ไม่ถูกต้อง</span>');
+ return `<div class="pi ${sev}"><div class="pi-head"><div><strong>${title}</strong>${blank(team)?'':`<small>${esc(teamLabel(team))}</small>`}</div>${badges?`<div class="pi-badges">${badges}</div>`:''}</div>${blank(reason)?'':`<p class="reason"><b>สาเหตุ:</b> ${esc(textOf(reason))}</p>`}${blank(impact)?'':`<p><b>ผลกระทบต่อเกม:</b> ${esc(textOf(impact))}</p>`}${extra.length?`<div class="pi-extra">${extra.join(' · ')}</div>`:''}${stale}${dateTxt||srcHtml?`<div class="pi-foot">${dateTxt?`<span>รายงาน ${esc(dateTxt)}</span>`:''}${srcHtml}</div>`:''}</div>`}
+function renderImpactBlock(b,open){const parsed=parseImpact(first(b,['player_impact','impact_analysis','player_notes','injury_notes'])),list=parsed.events,gDate=gameDate(b);
+ const warn=parsed.malformed?'<div class="pi-warn">ข้อมูลผลกระทบผู้เล่นบางส่วนอยู่ในรูปแบบที่อ่านไม่ได้ จึงไม่แสดง</div>':'';
+ if(!list.length)return warn||'<div class="no-impact">ไม่มีข้อมูลผลกระทบผู้เล่นที่บันทึกไว้สำหรับเกมนี้</div>';
+ const counts=new Map();for(const e of list){const k=eventKind(e);const lbl=k?k.label:({out:'รายงาน Out',q:'ไม่แน่นอน',ej:'ถูกไล่ออก',inj:'บาดเจ็บระหว่างเกม'})[sevClass(first(e,['status']))];if(lbl)counts.set(lbl,(counts.get(lbl)||0)+1)}
+ const sum=[...counts].map(([k,n])=>`${esc(k)} ${n}`).join(' · ');
+ const notes=parsed.notes.map(n=>`${esc(humanKey(n.key))}: ${esc(textOf(n.value))}`).join(' · ');
+ return `<details class="impact"${open?' open':''}><summary><span>⭐ ผลกระทบผู้เล่น · ${list.length} รายการ${sum?` <span class="muted">· ${sum}</span>`:''}</span></summary><div class="impact-list">${list.map(e=>renderImpactEntry(e,gDate)).join('')}${notes?`<div class="pi-extra">${notes}</div>`:''}${warn}</div></details>`}
 
 /* ---------- connection ---------- */
 function setStatus(message,type=''){const el=$('#connectionStatus');el.className='statusline '+(type==='ok'?'ok':type==='err'?'err':'');el.textContent=message}
@@ -401,7 +461,7 @@ function gameCard(b,{showTicket=true,openImpact=false}={}){const r=resultOf(b),t
 function renderGames(){const q=$('#gameSearch').value.trim().toLowerCase(),date=$('#gameDate').value,res=$('#gameResult').value,imp=$('#gameImpact').value;
  const list=[...data.bets].sort((a,b)=>(gameDate(b)||'').localeCompare(gameDate(a)||'')||(number(b.id)??0)-(number(a.id)??0));
  const filtered=list.filter(b=>{const ents=impactEntries(b);const t=ticketOfBet(b);
-  const hay=[teamName(b),opponentOf(b),t?ticketName(t):'',first(b,['reference_code']),...ents.map(e=>[first(e,['player','player_name','name']),first(e,['team'])].map(textOf).join(' '))].join(' ').toLowerCase();
+  const hay=[teamName(b),opponentOf(b),t?ticketName(t):'',first(b,['reference_code']),...ents.map(e=>[first(e,['player','player_name','name']),first(e,['team'])].map(x=>textOf(x)).join(' '))].join(' ').toLowerCase();
   return(!q||hay.includes(q))&&(!date||gameDate(b)===date)&&(res==='all'||resultOf(b)===res)&&(imp==='all'||(imp==='has'?ents.length>0:ents.length===0))});
  $('#gamesCount').textContent=`${filtered.length} เกม`;
  $('#gameList').innerHTML=filtered.length?filtered.map(b=>gameCard(b)).join(''):(list.length?'<div class="empty">ไม่พบเกมตามเงื่อนไขที่เลือก</div>':emptyState('ยังไม่มีข้อมูล bets'))}
