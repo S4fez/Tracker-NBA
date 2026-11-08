@@ -233,7 +233,7 @@ details.impact[open]>summary:after{transform:rotate(180deg)}
   <div class="stat"><label>กำไร / ขาดทุน (บิล)</label><strong id="anProfit">—</strong><small>บิลที่ตัดสินแล้ว</small></div>
   <div class="stat"><label>ROI</label><strong id="anRoi">—</strong><small>กำไร ÷ เงินเดิมพันของบิลที่ตัดสินแล้ว</small></div>
  </section>
- <div class="card"><div class="card-head"><h2>⚖️ ต่อแต้ม vs รองแต้ม</h2><span class="muted tiny">แต้มต่อติดลบ = ทีมต่อ</span></div><div id="favDogReport" class="split"></div>
+ <div class="card"><div class="card-head"><h2>⚖️ ต่อแต้ม · รองแต้ม · สูง/ต่ำ</h2><span class="muted tiny">แต้มต่อติดลบ = ทีมต่อ · สูง/ต่ำไม่นับในตารางแต้มต่อ</span></div><div id="favDogReport" class="split"></div>
   <div class="card-head" style="margin-top:4px"><h2>＋ วิเคราะห์ตามแต้มต่อ</h2><span class="muted tiny">Handicap / Spread</span></div><div id="spreadReport"><div class="empty">ยังไม่มีข้อมูลแต้มต่อให้วิเคราะห์</div></div></div>
  <div class="card"><div class="card-head"><h2>🏆 ผลงานตามทีมที่เลือก</h2><span class="muted tiny">คำนวณจาก bets ที่โหลดได้</span></div><div id="teamReport"><div class="empty">เชื่อมต่อฐานข้อมูลเพื่อสร้างรายงานทีม</div></div>
   <p class="notice">ผลรายคู่ใช้คอลัมน์ result ในฐานข้อมูลโดยตรง ไม่คำนวณแพ้ชนะจากคะแนนหรือราคาเอง · ตารางบิลเป็นแบบสเต็ป เงินเดิมพันและกำไรจึงสรุปที่ระดับบิล ไม่แบ่งลงรายทีม</p></div>
@@ -317,13 +317,25 @@ function teamName(b){return String(first(b,['selected_team','team','team_name','
 const NBA_TEAMS=['Atlanta Hawks','Boston Celtics','Brooklyn Nets','Charlotte Hornets','Chicago Bulls','Cleveland Cavaliers','Dallas Mavericks','Denver Nuggets','Detroit Pistons','Golden State Warriors','Houston Rockets','Indiana Pacers','LA Clippers','Los Angeles Lakers','Memphis Grizzlies','Miami Heat','Milwaukee Bucks','Minnesota Timberwolves','New Orleans Pelicans','New York Knicks','Oklahoma City Thunder','Orlando Magic','Philadelphia 76ers','Phoenix Suns','Portland Trail Blazers','Sacramento Kings','San Antonio Spurs','Toronto Raptors','Utah Jazz','Washington Wizards'];
 const TEAM_ALIAS=(()=>{const m=new Map();for(const full of NBA_TEAMS){const nick=full==='Portland Trail Blazers'?'Trail Blazers':full.split(' ').slice(-1)[0];m.set(full.toLowerCase(),full);m.set(nick.toLowerCase(),full)}m.set('los angeles clippers','LA Clippers');m.set('blazers','Portland Trail Blazers');m.set('sixers','Philadelphia 76ers');return m})();
 function canonicalTeam(name){const s=String(name??'').trim();return TEAM_ALIAS.get(s.toLowerCase())||s}
-function analyticsTeam(b){return canonicalTeam(teamName(b))}
+/* Over/Under (totals) legs. Stored data uses several conventions (line positive or negative, "Over"/"Over 232.0 points"/"Over 234.0 total",
+   scores split per team or the combined total in selected_score with opponent_score 0/null). Display-only: nothing is written back. */
+const TEAM_ABBR={'Atlanta Hawks':'ATL','Boston Celtics':'BOS','Brooklyn Nets':'BKN','Charlotte Hornets':'CHA','Chicago Bulls':'CHI','Cleveland Cavaliers':'CLE','Dallas Mavericks':'DAL','Denver Nuggets':'DEN','Detroit Pistons':'DET','Golden State Warriors':'GSW','Houston Rockets':'HOU','Indiana Pacers':'IND','LA Clippers':'LAC','Los Angeles Lakers':'LAL','Memphis Grizzlies':'MEM','Miami Heat':'MIA','Milwaukee Bucks':'MIL','Minnesota Timberwolves':'MIN','New Orleans Pelicans':'NOP','New York Knicks':'NYK','Oklahoma City Thunder':'OKC','Orlando Magic':'ORL','Philadelphia 76ers':'PHI','Phoenix Suns':'PHX','Portland Trail Blazers':'POR','Sacramento Kings':'SAC','San Antonio Spurs':'SAS','Toronto Raptors':'TOR','Utah Jazz':'UTA','Washington Wizards':'WAS'};
+function teamAbbr(name){const c=canonicalTeam(name);return TEAM_ABBR[c]||String(name??'').trim()}
+function isTotalPick(b){return /^\s*(over|under)\b/i.test(String(first(b,['selected_team'])??''))}
+function totalSide(b){return /^\s*over/i.test(String(first(b,['selected_team'])??''))?'Over':'Under'}
+function totalLine(b){const n=number(handicap(b));if(n!==null)return Math.abs(n);const m=String(first(b,['selected_team'])??'').match(/(\d+(?:\.\d+)?)/);return m?Number(m[1]):null}
+function totalTeams(b){const parts=String(opponentOf(b)??'').split(/\s+vs\.?\s+/i).map(x=>x.trim()).filter(Boolean);return parts.length===2?parts:null}
+function totalAbbrs(b){const t=totalTeams(b);return t?t.map(teamAbbr).join('/'):''}
+function totalPoints(b){const ss=number(first(b,['selected_score'])),os=number(first(b,['opponent_score']));if(ss===null)return null;return os===null||os===0?ss:ss+os}
+function pickLabel(b){if(!isTotalPick(b))return teamName(b);const line=totalLine(b),ab=totalAbbrs(b);return `${totalSide(b)}${line!==null?' '+line.toFixed(1):''}${ab?` (${ab})`:''}`}
+function analyticsTeam(b){if(isTotalPick(b)){const ab=totalAbbrs(b);return `${totalSide(b)}${ab?` (${ab})`:''}`}return canonicalTeam(teamName(b))}
 function opponentOf(b){return first(b,['opponent','opponent_team','away_team','team_away'])}
-function matchup(b){const explicit=first(b,['matchup','match','game','fixture','event_name']);if(explicit)return String(explicit);const home=first(b,['home_team','team_home']),away=first(b,['away_team','team_away']);if(home&&away)return home+' vs '+away;const opp=opponentOf(b);return opp?`${teamName(b)} vs ${opp}`:'คู่แข่งขันไม่ระบุ'}
+function matchup(b){if(isTotalPick(b))return `${pickLabel(b)} ${opponentOf(b)??''}`;const explicit=first(b,['matchup','match','game','fixture','event_name']);if(explicit)return String(explicit);const home=first(b,['home_team','team_home']),away=first(b,['away_team','team_away']);if(home&&away)return home+' vs '+away;const opp=opponentOf(b);return opp?`${teamName(b)} vs ${opp}`:'คู่แข่งขันไม่ระบุ'}
 function handicap(b){return first(b,['handicap','spread','point_spread','line','selected_line','points','handicap_line'])}
 function fmtSpread(v){const n=number(v);if(n===null)return v===null?'—':String(v);return (n>0?'+':'')+String(n)}
 function odds(b){return first(b,['odds','price','decimal_odds','odd','coefficient'])}
 function score(b){const s=first(b,['final_score','score','result_score','game_score']);if(s)return String(s);
+ if(isTotalPick(b)){const tp=totalPoints(b);if(tp===null)return '—';const ss=number(first(b,['selected_score'])),os=number(first(b,['opponent_score']));return os!==null&&os!==0?`${ss} - ${os} (รวม ${tp})`:`รวม ${tp}`}
  const ss=first(b,['selected_score']),os=first(b,['opponent_score']);if(ss!==null&&os!==null)return `${ss} - ${os}`;
  const h=first(b,['home_score','score_home']),a=first(b,['away_score','score_away']);return h!==null&&a!==null?`${h} - ${a}`:'—'}
 function betsFor(t){const id=ticketId(t);return data.bets.filter(b=>betTicketId(b)===id||(t.ticket_id&&betTicketId(b)===String(t.ticket_id)))}
@@ -454,9 +466,10 @@ function renderTickets(){const t=allTickets();$('#recentTickets').innerHTML=t.le
  $('#historyCount').textContent=`${filtered.length} บิล`;$('#historyTickets').innerHTML=filtered.length?filtered.map(ticketCard).join(''):(t.length?'<div class="empty">ไม่พบบิลตามเงื่อนไขที่เลือก</div>':emptyState('ยังไม่มีบิลที่โหลดมา'))}
 
 /* ---------- games & player impact ---------- */
-function gameCard(b,{showTicket=true,openImpact=false}={}){const r=resultOf(b),t=ticketOfBet(b),opp=opponentOf(b);
- return `<article class="game"><div class="game-top"><div class="game-title"><strong>${esc(teamName(b))}${opp?` <span class="muted">vs</span> ${esc(opp)}`:''}</strong><small>${esc(prettyDate(gameDate(b)))}${showTicket&&t?` · บิล ${esc(ticketName(t))}`:''}${first(b,['reference_code'])?` · Ref ${esc(first(b,['reference_code']))}`:''}</small></div>${statusPill(r)}</div>
- <div class="game-meta"><div class="mini"><span>แต้มต่อ (ทีมที่เลือก)</span><b>${esc(fmtSpread(handicap(b)))}</b></div><div class="mini"><span>ราคา</span><b>${esc(odds(b)??'—')}</b></div><div class="mini"><span>สกอร์ (เลือก - คู่แข่ง)</span><b>${esc(score(b))}</b></div><div class="mini"><span>ผล</span><b>${esc(statusText(r))}</b></div></div>
+function gameCard(b,{showTicket=true,openImpact=false}={}){const r=resultOf(b),t=ticketOfBet(b),opp=opponentOf(b),tot=isTotalPick(b);
+ const title=tot?`${esc(pickLabel(b))}${opp?` <span class="muted">·</span> <span class="muted">${esc(opp)}</span>`:''}`:`${esc(teamName(b))}${opp?` <span class="muted">vs</span> ${esc(opp)}`:''}`;
+ return `<article class="game"><div class="game-top"><div class="game-title"><strong>${title}</strong><small>${esc(prettyDate(gameDate(b)))}${showTicket&&t?` · บิล ${esc(ticketName(t))}`:''}${first(b,['reference_code'])?` · Ref ${esc(first(b,['reference_code']))}`:''}</small></div>${statusPill(r)}</div>
+ <div class="game-meta"><div class="mini"><span>${tot?'เส้นสกอร์รวม':'แต้มต่อ (ทีมที่เลือก)'}</span><b>${esc(tot?(totalLine(b)??'—'):fmtSpread(handicap(b)))}</b></div><div class="mini"><span>ราคา</span><b>${esc(odds(b)??'—')}</b></div><div class="mini"><span>${tot?'สกอร์':'สกอร์ (เลือก - คู่แข่ง)'}</span><b>${esc(score(b))}</b></div><div class="mini"><span>ผล</span><b>${esc(statusText(r))}</b></div></div>
  ${renderImpactBlock(b,openImpact)}</article>`}
 function renderGames(){const q=$('#gameSearch').value.trim().toLowerCase(),date=$('#gameDate').value,res=$('#gameResult').value,imp=$('#gameImpact').value;
  const list=[...data.bets].sort((a,b)=>(gameDate(b)||'').localeCompare(gameDate(a)||'')||(number(b.id)??0)-(number(a.id)??0));
@@ -486,12 +499,13 @@ function renderAnalytics(){fillTeamFilter();const bs=analyticsBets(),c=countResu
  const empty=emptyState(data.bets.length?'ไม่มีข้อมูลตามตัวกรองที่เลือก':'ยังไม่มีข้อมูล bets');
  if(!bs.length){$('#teamReport').innerHTML=empty;$('#spreadReport').innerHTML=empty;$('#favDogReport').innerHTML='';return}
  const teams=groupBy(bs,analyticsTeam).sort((a,b)=>b.n-a.n||a.label.localeCompare(b.label));$('#teamReport').innerHTML=resultTable(teams,'ทีมที่เลือก');
- const withSpread=bs.filter(b=>handicap(b)!==null);
+ const withSpread=bs.filter(b=>handicap(b)!==null&&!isTotalPick(b)),totals=bs.filter(isTotalPick);
  if(withSpread.length){const spreads=groupBy(withSpread,b=>String(handicap(b))).sort((a,b)=>(number(a.label)??0)-(number(b.label)??0));spreads.forEach(x=>x.label=fmtSpread(x.label));$('#spreadReport').innerHTML=resultTable(spreads,'แต้มต่อ')}
  else $('#spreadReport').innerHTML='<div class="empty">ไม่พบคอลัมน์แต้มต่อ เช่น handicap, spread, point_spread หรือ line ในข้อมูล bets</div>';
  const fav=withSpread.filter(b=>number(handicap(b))<0),dog=withSpread.filter(b=>number(handicap(b))>0),pk=withSpread.filter(b=>number(handicap(b))===0);
  const tile=(label,items)=>{const cc=countResults(items);return `<div class="stat"><label>${label}</label><strong>${pct(winRate(cc))}</strong><small>${items.length} คู่ · ${cc.won}-${cc.lost}-${cc.push}</small></div>`};
- $('#favDogReport').innerHTML=withSpread.length?tile('ทีมต่อ (−)',fav)+tile('ทีมรอง (+)',dog)+(pk.length?tile('เสมอแต้ม (0)',pk):''):''}
+ $('#favDogReport').innerHTML=withSpread.length?tile('ทีมต่อ (−)',fav)+tile('ทีมรอง (+)',dog)+(pk.length?tile('เสมอแต้ม (0)',pk):''):'';
+ if(totals.length)$('#favDogReport').innerHTML+=tile('สูง (Over)',totals.filter(b=>totalSide(b)==='Over'))+tile('ต่ำ (Under)',totals.filter(b=>totalSide(b)==='Under'))}
 
 /* ---------- themes ---------- */
 function currentTheme(){try{return localStorage.getItem('nbaTrackerTheme')||DEFAULT_THEME}catch{return DEFAULT_THEME}}
