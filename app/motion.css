@@ -1,0 +1,54 @@
+/* Motion layer for the Courtside Ledger UI.
+   Rules adapted from the HyperFrames motion guide: arrivals land on a long-tail ease-out,
+   lists stagger 40-80 ms, no bouncing UI, nothing loops once it has landed, exits are shorter
+   than entrances. Everything here is skipped when the OS asks for reduced motion.
+   Classes are added by app/motion.js; without that script the page renders exactly as before. */
+
+:root { --mo-out: cubic-bezier(0.16, 1, 0.3, 1); --mo-step: 45ms; }
+
+/* Always-on micro feedback (cheap, no layout shift) */
+.btn, .tabbar a, #sideNav a, .srow, .dt tbody tr, .card, .kpi { transition: background-color 150ms ease, border-color 150ms ease, box-shadow 200ms ease, transform 160ms var(--mo-out), color 150ms ease; }
+.btn:active, .tabbar a:active, .srow:active { transform: scale(0.97); }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* whole view: opacity only, so sticky/fixed children keep their containing block */
+  #view.mo-enter { animation: mo-fade 260ms ease-out both; }
+  @keyframes mo-fade { from { opacity: 0; } to { opacity: 1; } }
+
+  /* staggered arrivals (cards, KPI cells, rows, list items) */
+  .mo-rise { animation: mo-rise 560ms var(--mo-out) both; animation-delay: calc(var(--mo-i, 0) * var(--mo-step) + var(--mo-base, 0ms)); }
+  @keyframes mo-rise { from { opacity: 0; transform: translateY(10px); } to { transform: none; } }
+
+  /* page title: blur in, no translate */
+  .mo-blur { animation: mo-blur 240ms ease-out both; animation-delay: var(--mo-base, 0ms); }
+  @keyframes mo-blur { from { opacity: 0; filter: blur(8px); } to { filter: none; } }
+
+  /* result pips land one after another */
+  .mo-pop { animation: mo-pop 380ms var(--mo-out) both; animation-delay: calc(var(--mo-i, 0) * 35ms + var(--mo-base, 0ms)); }
+  @keyframes mo-pop { from { opacity: 0; transform: scale(0.5); } to { transform: none; } }
+
+  /* bullet bars grow from the left */
+  .mo-grow { transform-origin: left center; animation: mo-grow 900ms var(--mo-out) both; animation-delay: var(--mo-base, 200ms); }
+  @keyframes mo-grow { from { transform: scaleX(0); } to { transform: none; } }
+
+  /* cumulative chart: line draws, area fades in after it, dots and labels land last */
+  .mo-chart path.line { stroke-dasharray: 1; stroke-dashoffset: 0; animation: mo-draw 1300ms var(--mo-out) 150ms both; }
+  @keyframes mo-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  .mo-chart path.area { animation: mo-in 700ms ease-out 700ms both; }
+  @keyframes mo-in { from { opacity: 0; } }
+  .mo-chart circle.dotp { transform-box: fill-box; transform-origin: center; animation: mo-pop 380ms var(--mo-out) both; animation-delay: calc(500ms + var(--mo-i, 0) * 40ms); }
+  .mo-chart text.lbl { animation: mo-blur 240ms ease-out 1250ms both; }
+
+  /* daily bars rise from the zero line */
+  .mo-chart rect.bar-pos, .mo-chart rect.bar-neg { transform-box: fill-box; animation: mo-bar 700ms var(--mo-out) both; animation-delay: calc(150ms + var(--mo-i, 0) * 30ms); }
+  .mo-chart rect.bar-pos { transform-origin: center bottom; }
+  .mo-chart rect.bar-neg { transform-origin: center top; }
+  @keyframes mo-bar { from { transform: scaleY(0); } to { transform: none; } }
+
+  /* tab bar: the active icon settles */
+  .tabbar a[aria-current="page"] svg { animation: mo-pop 320ms var(--mo-out) both; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:active, .tabbar a:active, .srow:active { transform: none; }
+}

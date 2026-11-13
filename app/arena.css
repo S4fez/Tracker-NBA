@@ -1,0 +1,75 @@
+/* Theme 10 · Arena Night — the "mobile design 10" look.
+   Only active when <html data-ui="arena"> (set by applyTheme in loader.js for theme 10).
+   Colours come from the theme variables; this file adds the glass surfaces, the glow,
+   the floating tab bar and the SF-style filled result icons. Nothing here changes data. */
+
+html[data-ui="arena"] {
+  --font-sans: "Prompt", "IBM Plex Sans Thai", "Noto Sans Thai", "Leelawadee UI", "Thonburi", system-ui, -apple-system, sans-serif;
+  --r-3: 18px; --r-2: 12px;
+  --glass: rgba(255, 255, 255, 0.045);
+  --glass-2: rgba(255, 255, 255, 0.075);
+  --edge: rgba(255, 255, 255, 0.09);
+  --ios-win: #30D158; --ios-loss: #FF453A; --ios-push: #8E8E93;
+}
+html[data-ui="arena"] body {
+  background:
+    radial-gradient(700px 420px at 85% -5%, rgba(60, 240, 255, 0.16), transparent 70%),
+    radial-gradient(560px 380px at -5% 35%, rgba(92, 242, 166, 0.07), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* glass surfaces */
+html[data-ui="arena"] .card,
+html[data-ui="arena"] .kpi {
+  background: var(--glass);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-3);
+  box-shadow: none;
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+}
+html[data-ui="arena"] .kpis { background: transparent; border: 0; gap: 10px; }
+html[data-ui="arena"] .card-h { border-bottom-color: rgba(255, 255, 255, 0.06); }
+html[data-ui="arena"] .card-f { border-top-color: rgba(255, 255, 255, 0.06); background: transparent; }
+html[data-ui="arena"] .side-col, html[data-ui="arena"] .topbar { background: rgba(5, 7, 13, 0.72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+html[data-ui="arena"] .kpi-v { font-family: var(--font-mono); letter-spacing: -0.02em; }
+html[data-ui="arena"] .kpi-v .pos { color: var(--win); text-shadow: 0 0 18px rgba(92, 242, 166, 0.25); }
+html[data-ui="arena"] .btn { border-radius: 999px; background: var(--glass); border-color: var(--edge); }
+html[data-ui="arena"] .btn:hover { background: var(--glass-2); }
+html[data-ui="arena"] .btn.primary { background: var(--accent); color: var(--on-accent); border-color: transparent; }
+html[data-ui="arena"] .dt th { background: rgba(13, 19, 34, 0.92); }
+
+/* SF-style filled result icons: pips in lists */
+html[data-ui="arena"] .pips { gap: 4px; }
+html[data-ui="arena"] .pip { width: 14px; height: 14px; border-radius: 50%; box-shadow: none; background-repeat: no-repeat; background-position: center; background-size: 100% 100%; }
+html[data-ui="arena"] .pip.won { background-color: transparent; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='12' fill='%2330D158'/><path d='M7 12.5l3.3 3.3L17.2 8.6' fill='none' stroke='white' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'/></svg>"); }
+html[data-ui="arena"] .pip.lost { background-color: transparent; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='12' fill='%23FF453A'/><path d='M8.4 8.4l7.2 7.2M15.6 8.4l-7.2 7.2' fill='none' stroke='white' stroke-width='2.8' stroke-linecap='round'/></svg>"); }
+html[data-ui="arena"] .pip.push, html[data-ui="arena"] .pip.void { height: 14px; background-color: transparent; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='12' fill='%238E8E93'/><path d='M7.8 10h8.4M7.8 14h8.4' fill='none' stroke='white' stroke-width='2.8' stroke-linecap='round'/></svg>"); }
+html[data-ui="arena"] .pip.pending { box-shadow: inset 0 0 0 1.5px var(--pending); background: transparent; }
+
+/* parlay chain nodes on the bill page */
+html[data-ui="arena"] li.won > .node { background: var(--ios-win); border-color: var(--ios-win); color: #fff; }
+html[data-ui="arena"] li.lost > .node { background: var(--ios-loss); border-color: var(--ios-loss); color: #fff; }
+html[data-ui="arena"] li.push > .node, html[data-ui="arena"] li.void > .node { background: var(--ios-push); border-color: var(--ios-push); color: #fff; }
+html[data-ui="arena"] .node { width: 28px; height: 28px; }
+html[data-ui="arena"] .node svg { width: 14px; height: 14px; stroke-width: 2.8; }
+
+/* status chips keep their words, gain a filled icon dot */
+html[data-ui="arena"] .st { border-radius: 999px; }
+
+/* mobile: floating glass tab bar */
+@media (max-width: 767px) {
+  html[data-ui="arena"] .tabbar {
+    left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom));
+    height: var(--tabbar-h); padding: 4px 6px; border-radius: 28px;
+    background: rgba(16, 22, 38, 0.72); border: 1px solid var(--edge);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.65);
+  }
+  html[data-ui="arena"] .tabbar a { border-radius: 22px; }
+  html[data-ui="arena"] .tabbar a[aria-current="page"] { background: rgba(60, 240, 255, 0.12); box-shadow: inset 0 0 0 1px rgba(60, 240, 255, 0.22); }
+  html[data-ui="arena"] .tabbar a[aria-current="page"]::before { display: none; }
+  html[data-ui="arena"] .statusbar { padding-bottom: calc(var(--tabbar-h) + 28px + env(safe-area-inset-bottom)); }
+  html[data-ui="arena"] .kpi { flex-basis: 62%; }
+  html[data-ui="arena"] .kpi-v { font-size: 22px; }
+}

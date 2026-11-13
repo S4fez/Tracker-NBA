@@ -9,7 +9,7 @@
   const TICKET_COLS = 'id,ticket_code,bet_date,stake,payout_if_win,status,net_profit';
   const BET_COLS = 'id,ticket_id,selected_team,opponent,spread,odds,selected_score,opponent_score,result,game_date,player_impact';
 
-  /* ---------- themes (same 8 presets as classic.html + 9 = Courtside Ledger, the chosen redesign) ---------- */
+  /* ---------- themes (same 8 presets as classic.html + 9 = Courtside Ledger + 10 = Arena Night, mobile design 10) ---------- */
   const THEMES = [
     { name: '1. Neon Court', bg: '#080d1d', panel: '#111a34', panel2: '#182747', line: '#2d3b61', text: '#f6f7ff', muted: '#a7b1d0', accent: '#ff4f91', accent2: '#ff9b52', good: '#45dfb0', bad: '#ff617b', on: '#1d0611' },
     { name: '2. Midnight Blue', bg: '#071522', panel: '#0e2435', panel2: '#153249', line: '#25465d', text: '#edf8ff', muted: '#94b5c7', accent: '#31c8d8', accent2: '#71e6f0', good: '#48d9a7', bad: '#ff7185', on: '#032026' },
@@ -19,12 +19,13 @@
     { name: '6. Sunset', bg: '#1b1016', panel: '#2b1822', panel2: '#3b202b', line: '#6a3544', text: '#fff3f1', muted: '#cba8ae', accent: '#ff785f', accent2: '#ffc078', good: '#64d9a5', bad: '#ff687e', on: '#220b06' },
     { name: '7. Royal Gold', bg: '#0b1020', panel: '#141f35', panel2: '#1b2a45', line: '#354764', text: '#f7f7fb', muted: '#a6b3c9', accent: '#c9a34b', accent2: '#f0d58b', good: '#4bd6a4', bad: '#ff7185', on: '#17130a' },
     { name: '8. Navy Teal', bg: '#07111f', panel: '#0d1b2e', panel2: '#13253d', line: '#21364f', text: '#eef6fb', muted: '#93a8bf', accent: '#2dd4bf', accent2: '#7ee8da', good: '#3ddc97', bad: '#ff6b81', on: '#04201c' },
-    { name: '9. Courtside Ledger', bg: '#0B1220', panel: '#111A2E', panel2: '#16213A', line: '#24314F', text: '#E6EDF7', muted: '#A7B3C9', accent: '#3CC8D8', accent2: '#67D8E5', good: '#63C08F', bad: '#EC7F78', on: '#0B1220' }
+    { name: '9. Courtside Ledger', bg: '#0B1220', panel: '#111A2E', panel2: '#16213A', line: '#24314F', text: '#E6EDF7', muted: '#A7B3C9', accent: '#3CC8D8', accent2: '#67D8E5', good: '#63C08F', bad: '#EC7F78', on: '#0B1220' },
+    { name: '10. Arena Night', bg: '#05070D', panel: '#0D1322', panel2: '#121A2D', line: '#1E2A44', text: '#EEF3FF', muted: '#8C97B2', accent: '#3CF0FF', accent2: '#7FF6FF', good: '#5CF2A6', bad: '#FF7A8A', on: '#05070D', ui: 'arena' }
   ];
-  const DEFAULT_THEME = '9';
+  const DEFAULT_THEME = '10';
   const store = { get: (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } }, del: (k) => { try { localStorage.removeItem(k); } catch (e) { /* storage blocked */ } } };
   /* one-time switch to the chosen redesign's palette; any later choice in ⚙ is kept */
-  if (!store.get('nbaTrackerThemeV3')) { store.set('nbaTrackerTheme', DEFAULT_THEME); store.set('nbaTrackerThemeV3', '1'); }
+  if (!store.get('nbaTrackerThemeV4')) { store.set('nbaTrackerTheme', DEFAULT_THEME); store.set('nbaTrackerThemeV3', '1'); store.set('nbaTrackerThemeV4', '1'); }
   const currentTheme = () => { const n = store.get('nbaTrackerTheme'); return THEMES[Number(n) - 1] ? String(n) : DEFAULT_THEME; };
   function applyTheme(n) {
     const t = THEMES[Number(n) - 1] || THEMES[Number(DEFAULT_THEME) - 1]; const r = document.documentElement.style;
@@ -38,6 +39,7 @@
       '--push': t.light ? '#5b6475' : '#B3BCCD', '--push-tint': t.light ? 'rgba(91,100,117,.10)' : 'rgba(179,188,205,.12)', '--ring': t.light ? 'rgba(0,0,0,.25)' : 'rgba(255,255,255,.28)' };
     for (const k in set) r.setProperty(k, set[k]);
     r.colorScheme = t.light ? 'light' : 'dark';
+    if (t.ui) document.documentElement.dataset.ui = t.ui; else delete document.documentElement.dataset.ui;
     const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = t.bg;
     store.set('nbaTrackerTheme', String(THEMES.indexOf(t) + 1));
   }
