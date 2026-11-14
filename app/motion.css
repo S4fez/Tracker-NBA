@@ -49,6 +49,54 @@
   .tabbar a[aria-current="page"] svg { animation: mo-pop 320ms var(--mo-out) both; }
 }
 
+
+/* ---- round 2: dialogs, ticker, tab pill, live status, scroll reveal, chart toggles ---- */
+.mo-tabpill { position: absolute; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 22px; pointer-events: none; z-index: 0;
+  background: rgba(60, 240, 255, 0.12); box-shadow: inset 0 0 0 1px rgba(60, 240, 255, 0.22); opacity: 0; }
+.tabbar.mo-has-pill a { position: relative; z-index: 1; }
+html[data-ui="arena"] .tabbar.mo-has-pill a[aria-current="page"] { background: transparent; box-shadow: none; }
+html:not([data-ui="arena"]) .mo-tabpill { display: none; }
+.mo-wait { opacity: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .mo-tabpill { transition: transform 450ms var(--mo-out), width 450ms var(--mo-out), opacity 200ms ease; }
+
+  /* dialogs: filter sheet slides up, settings scales in, command palette drops in */
+  dialog.sheet[open] { animation: mo-sheet 420ms var(--mo-out) both; }
+  @keyframes mo-sheet { from { transform: translateY(32px); opacity: 0; } }
+  dialog.modal[open] { animation: mo-modal 320ms var(--mo-out) both; }
+  @keyframes mo-modal { from { transform: scale(0.96); opacity: 0; } }
+  dialog[open]::backdrop { animation: mo-in 240ms ease-out both; }
+  .cmdk:not([hidden]) .cmdk-scrim { animation: mo-in 200ms ease-out both; }
+  .cmdk:not([hidden]) .cmdk-panel { animation: mo-cmdk 300ms var(--mo-out) both; }
+  @keyframes mo-cmdk { from { transform: translateY(-10px) scale(0.98); opacity: 0; filter: blur(4px); } }
+
+  /* live status: pending pips and "waiting for result" labels breathe slowly */
+  .pip.pending, li.pending > .node { animation: mo-breathe 1800ms ease-in-out infinite; }
+  .tk-st .run, .gc-hd .run { animation: mo-breathe 1800ms ease-in-out infinite; }
+  @keyframes mo-breathe { 50% { opacity: 0.45; } }
+
+  /* the leg where the bill broke sends one ripple */
+  li:has(> .cl .brk.first) > .node, li:has(.brk.first) > .node { animation: mo-ripple 1100ms var(--mo-out) 700ms both; }
+  @keyframes mo-ripple { 0% { box-shadow: 0 0 0 0 rgba(255, 69, 58, 0.55); } 100% { box-shadow: 0 0 0 12px rgba(255, 69, 58, 0); } }
+
+  /* won badges catch the light once */
+  .st-won.mo-shine { background-image: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.28) 50%, transparent 70%); background-size: 250% 100%; background-repeat: no-repeat; animation: mo-shine 1100ms ease-out 600ms both; }
+  @keyframes mo-shine { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+
+  /* refresh button spins while the page reloads */
+  #refreshBtn.mo-spin svg { animation: mo-spin 700ms linear infinite; }
+  @keyframes mo-spin { to { transform: rotate(360deg); } }
+}
+
+/* desktop: soft spotlight that follows the pointer on Arena cards */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html[data-ui="arena"] .card { position: relative; }
+  html[data-ui="arena"] .card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity 250ms ease;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(60, 240, 255, 0.07), transparent 60%); }
+  html[data-ui="arena"] .card:hover::after { opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn:active, .tabbar a:active, .srow:active { transform: none; }
 }

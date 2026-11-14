@@ -73,3 +73,14 @@ html[data-ui="arena"] .st { border-radius: 999px; }
   html[data-ui="arena"] .kpi { flex-basis: 62%; }
   html[data-ui="arena"] .kpi-v { font-size: 22px; }
 }
+
+/* compact leg cards: glass + SF filled result icons */
+html[data-ui="arena"] .ml { background: var(--glass); border-color: var(--edge); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+html[data-ui="arena"] .ml-rule, html[data-ui="arena"] .ml-det { border-color: rgba(255, 255, 255, 0.07); }
+html[data-ui="arena"] .ml-rule { background: rgba(255, 255, 255, 0.08); }
+html[data-ui="arena"] .ml-chips { border-top-color: rgba(255, 255, 255, 0.08); }
+html[data-ui="arena"] .ml-ic.r-won { background: var(--ios-win); }
+html[data-ui="arena"] .ml-ic.r-lost { background: var(--ios-loss); }
+html[data-ui="arena"] .ml-ic.r-push, html[data-ui="arena"] .ml-ic.r-void { background: var(--ios-push); }
+html[data-ui="arena"] .ml-chip.k-out { color: #FF9A92; border-color: rgba(255, 69, 58, 0.32); background: rgba(255, 69, 58, 0.09); }
+html[data-ui="arena"] .ml-pick { background: rgba(60, 240, 255, 0.10); }

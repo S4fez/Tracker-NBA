@@ -8,10 +8,26 @@
   function reduced() { return !!(mq && mq.matches); }
   var MAX_I = 12; // cap the stagger so long lists never wait
 
+  /* elements below the fold wait (invisible) and play when they scroll into view */
+  var io = window.IntersectionObserver ? new IntersectionObserver(function (entries) {
+    var k = 0;
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      var el = en.target; io.unobserve(el);
+      el.style.setProperty('--mo-i', String(Math.min(k++, MAX_I)));
+      el.style.setProperty('--mo-base', '0ms');
+      el.classList.remove('mo-wait');
+      el.classList.add(el.getAttribute('data-mo') || 'mo-rise');
+    });
+  }, { rootMargin: '0px 0px -8% 0px' }) : null;
+
   function stagger(nodes, cls, base) {
-    var n = 0;
+    var n = 0, vh = window.innerHeight || 800;
     Array.prototype.forEach.call(nodes, function (el) {
-      if (!el || el.classList.contains(cls)) return;
+      if (!el || el.classList.contains(cls) || el.classList.contains('mo-wait')) return;
+      if (io && el.getBoundingClientRect().top > vh) {
+        el.setAttribute('data-mo', cls); el.classList.add('mo-wait'); io.observe(el); return;
+      }
       el.style.setProperty('--mo-i', String(Math.min(n, MAX_I)));
       if (base != null) el.style.setProperty('--mo-base', base + 'ms');
       el.classList.add(cls);
@@ -78,6 +94,7 @@
     Array.prototype.forEach.call(v.querySelectorAll('.bullet > i'), function (b) { b.classList.add('mo-grow'); });
     animateCharts(v);
     animateList(v, 260);
+    Array.prototype.forEach.call(v.querySelectorAll('.st-won'), function (b) { b.classList.add('mo-shine'); });
   }
 
   function start() {
@@ -105,6 +122,69 @@
       requestAnimationFrame(function () { animateList(so, 160); stagger(so.querySelectorAll('.so .card'), 'mo-rise', 120); });
     }).observe(so, { childList: true });
     if (v.firstChild) enterView(v);
+    wireExtras(v);
+  }
+
+  /* ---- round 2 extras ---- */
+  var lastClick = 0;
+  function wireExtras(v) {
+    // chart toggles (LIN/LOG, ranges): animate the redrawn chart if it changed right after a click
+    document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('button')) lastClick = Date.now(); }, true);
+    new MutationObserver(function (muts) {
+      if (reduced() || Date.now() - lastClick > 700) return;
+      var seen = [];
+      muts.forEach(function (m) {
+        var c = m.target.closest ? m.target.closest('.chart[data-chart]') : null;
+        if (c && seen.indexOf(c) < 0) seen.push(c);
+      });
+      seen.forEach(function (c) { requestAnimationFrame(function () { animateCharts(c.parentNode || c); }); });
+    }).observe(v, { childList: true, subtree: true });
+
+    // scores ticker: cells slide in when it is (re)built
+    var tk = document.getElementById('ticker');
+    function tickIn() { if (!reduced()) stagger(tk.querySelectorAll('.tk-cell'), 'mo-rise', 80); }
+    if (tk) { new MutationObserver(tickIn).observe(tk, { childList: true }); if (tk.firstChild) tickIn(); }
+
+    // command palette: results stagger each time the list is rebuilt
+    var cl = document.querySelector('.cmdk-list');
+    if (cl) new MutationObserver(function () {
+      if (reduced()) return;
+      Array.prototype.forEach.call(cl.querySelectorAll('.cmdk-opt'), function (o, i) {
+        if (i < MAX_I) { o.style.setProperty('--mo-i', String(i)); o.style.setProperty('--mo-step', '22ms'); o.classList.add('mo-rise'); }
+      });
+    }).observe(cl, { childList: true });
+
+    // mobile tab bar: one pill that slides to the active tab
+    var tb = document.getElementById('tabbar');
+    if (tb) {
+      var pill = document.createElement('span'); pill.className = 'mo-tabpill'; pill.setAttribute('aria-hidden', 'true');
+      function place() {
+        var a = tb.querySelector('a[aria-current="page"]');
+        if (!a || !tb.offsetWidth) { pill.style.opacity = '0'; return; }
+        if (pill.parentNode !== tb) tb.insertBefore(pill, tb.firstChild);
+        tb.classList.add('mo-has-pill');
+        pill.style.width = a.offsetWidth + 'px';
+        pill.style.transform = 'translateX(' + a.offsetLeft + 'px)';
+        pill.style.opacity = '1';
+      }
+      new MutationObserver(function () { requestAnimationFrame(place); }).observe(tb, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-current'] });
+      window.addEventListener('resize', function () { requestAnimationFrame(place); });
+      requestAnimationFrame(place);
+    }
+
+    // refresh button spins until the reload takes over
+    var rb = document.getElementById('refreshBtn');
+    if (rb) rb.addEventListener('click', function () { if (!reduced()) rb.classList.add('mo-spin'); });
+
+    // Arena cards: spotlight follows the pointer (desktop only, via CSS media query)
+    document.addEventListener('pointermove', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      var c = e.target.closest ? e.target.closest('.card') : null;
+      if (!c) return;
+      var r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    }, { passive: true });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

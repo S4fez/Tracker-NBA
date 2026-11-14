@@ -38,7 +38,7 @@
   function sevClass(status) { const s = String(status || '').toLowerCase().trim(); if (!s) return '';
     if (/ไม่บันทึกเป็นข้อเท็จจริง|ยังไม่มีข้อมูลยืนยัน|ต้องยืนยัน|unverified|unconfirmed/.test(s)) return 'unv';
     if (/eject|ไล่ออก/.test(s)) return 'ej';
-    if (/during (the )?game|left (the )?game|ออกระหว่างเกม|บาดเจ็บระหว่างเกม/.test(s)) return 'inj';
+    if (/during (the )?game|left (the )?game|left in (the )?\w+ (quarter|half)|(did )?not return|ออกระหว่างเกม|บาดเจ็บระหว่างเกม|ไม่กลับมา/.test(s)) return 'inj';
     const lead = s.split('/')[0];
     if (/return|available|\bactive\b|no injur|ไม่พบ|ลงได้|พร้อม|กลับมา/.test(lead)) return 'ok';
     if (/question|doubt|game-time|probable|day-to-day|ไม่แน่นอน/.test(lead)) return 'q';
@@ -69,6 +69,46 @@
     const sum = [...counts].map(([k, n]) => `${esc(k)} ${n}`).join(' · ');
     const notes = parsed.notes.map((n) => `${esc(humanKey(n.key))}: ${esc(textOf(n.value))}`).join(' · ');
     return `<details class="impact"${open ? ' open' : ''}><summary><span>ผลกระทบผู้เล่น · ${list.length} รายการ${sum ? ` <span class="faint">· ${sum}</span>` : ''}</span></summary><div class="impact-list">${list.map((e) => renderImpactEntry(e, b.date)).join('')}${notes ? `<div class="pi-extra">${notes}</div>` : ''}${warn}</div></details>`;
+  }
+
+  /* ---------- compact mobile leg card ("mini scoreboard" + player-impact chips) ---------- */
+  const ML_TAG = { out: 'ไม่ลง', q: 'ไม่แน่นอน', inj: 'เจ็บกลางเกม', ej: 'โดนไล่ออก', ok: 'ลงเล่น', unv: 'ยังไม่ยืนยัน' };
+  function mlSev(e) { if (String(piFirst(e, ['team'])) === 'data_quality') return 'unv'; const k = eventKind(e); return (k && k.sev) || sevClass(piFirst(e, ['status'])) || ''; }
+  function mlChip(e, b) {
+    const sev = mlSev(e), player = piFirst(e, ['player', 'player_name', 'name']), tmRaw = piFirst(e, ['team']);
+    const isDQ = String(tmRaw) === 'data_quality';
+    const tag = isDQ ? 'หมายเหตุข้อมูล' : (ML_TAG[sev] || (eventKind(e) ? eventKind(e).label : '') || textOf(piFirst(e, ['status'])) || 'หมายเหตุ');
+    const full = blank(player) ? '' : textOf(player), parts = full.split(/\s+/).filter(Boolean);
+    const lastBit = parts.slice(1).join(' '), short = parts.length > 1 && lastBit.length > 2 ? lastBit : full;
+    const tm = blank(tmRaw) || isDQ ? '' : C.abbr(textOf(tmRaw));
+    return `<span class="ml-chip k-${esc(sev || 'na')}"><i aria-hidden="true"></i><b>${esc(tag)}</b>${short ? `<span>${esc(short)}</span>` : ''}${tm ? `<span class="ml-tm">${esc(tm)}</span>` : ''}</span>`;
+  }
+  function mlSide(e, b) {
+    const tmRaw = piFirst(e, ['team']); if (blank(tmRaw) || String(tmRaw) === 'data_quality') return '';
+    if (b.market !== 'Spread') return 'เกมรวมแต้ม';
+    const t = C.canonicalTeam(textOf(tmRaw)); return t === b.pick ? 'ฝั่งที่เลือก' : t === b.opponent ? 'ฝั่งคู่แข่ง' : '';
+  }
+  function mlCard(b, i) {
+    const res = b.result, total = b.market !== 'Spread';
+    const parsed = parseImpact(b.pi), evs = parsed.events;
+    const perTeam = b.final && !b.combined;
+    const row = (tm, sc, other) => `<span class="ml-t${perTeam && sc > other ? ' w' : ''}"><i style="--c:${esc(C.teamColor(tm))}" aria-hidden="true"></i><b title="${esc(C.canonicalTeam(tm))}">${esc(C.abbr(tm))}</b><span class="ml-sc">${perTeam ? esc(sc) : ''}</span></span>`;
+    const pickTxt = total ? `${b.market === 'Over' ? 'สูง' : 'ต่ำ'} ${b.line}` : `${C.abbr(b.pick)} ${F.line(b.line)}`;
+    const tip = res === 'pending' ? tipFor(b) : null;
+    const when = b.final ? (total ? `รวม ${b.totalPts}` : 'จบเกม') : res === 'pending' ? (tip ? `${tip} ICT` : 'รอผล') : 'ไม่ได้บันทึกสกอร์';
+    const chips = evs.length ? `<span class="ml-chips">${evs.slice(0, 3).map((e) => mlChip(e, b)).join('')}${evs.length > 3 ? `<span class="ml-chip k-na"><b>+${evs.length - 3}</b></span>` : ''}</span>` : '';
+    const warn = parsed.malformed ? '<div class="pi-warn">ข้อมูลผลกระทบผู้เล่นบางส่วนอยู่ในรูปแบบที่อ่านไม่ได้ จึงไม่แสดง</div>' : '';
+    const notes = parsed.notes.map((n) => `${esc(humanKey(n.key))}: ${esc(textOf(n.value))}`).join(' · ');
+    const evHtml = evs.map((e) => { const sd = mlSide(e, b); return `<div class="ml-ev">${sd ? `<span class="ml-side">${esc(sd)}</span>` : ''}${renderImpactEntry(e, b.date)}</div>`; }).join('');
+    const facts = `<div class="ml-facts"><span>${esc(F.dateTH(b.date))}</span><span>ราคา ${b.odds == null ? '—' : esc(Number(b.odds).toFixed(2))}</span>${b.final ? `<span>${esc(b.score)}</span>` : ''}${b.verdict ? `<span>${esc(b.verdict)}</span>` : ''}</div>`;
+    const evBlock = evs.length || notes || warn ? `<div class="ml-evs">${evHtml}${notes ? `<div class="pi-extra">${notes}</div>` : ''}${warn}</div>`
+      : b.final ? '<div class="faint ml-none">ไม่มีบันทึกผู้เล่นคนสำคัญที่ไม่ลง เจ็บ หรือโดนไล่ออก</div>' : '';
+    const st = (C.STATUS[res] || { th: res }).th;
+    return `<details class="ml is-${esc(res)}"><summary aria-label="คู่ที่ ${i + 1} ${esc(pickTxt)} ${esc(st)}${evs.length ? ` · ผลกระทบผู้เล่น ${evs.length} รายการ` : ''}">
+      <span class="ml-teams">${row(b.teams[0], b.ss, b.os)}${row(b.teams[1], b.os, b.ss)}</span>
+      <span class="ml-rule" aria-hidden="true"></span>
+      <span class="ml-right"><span class="ml-pick">${esc(pickTxt)}</span><span class="ml-st"><span class="ml-ic r-${esc(res)}" aria-hidden="true">${ic(ST_ICON[res] || 'info')}</span><span class="ml-stt">${esc(st)}</span><span class="faint">${esc(when)}</span></span></span>
+      ${chips}</summary><div class="ml-det">${facts}${evBlock}</div></details>`;
   }
 
   /* ---------- ticket detail ---------- */
@@ -120,15 +160,7 @@
         <td class="muted" style="font-size:var(--fs-12)">${b.verdict ? esc(b.verdict) : '<span class="faint">รอผลการแข่งขัน</span>'}</td>
         <td class="tight">${badge(b.result)}</td></tr>
         ${pb ? `<tr class="sub"><td></td><td colspan="8">${pb}</td></tr>` : ''}`; }).join('');
-    const legCards = t.bets.map((b, i) => `<div class="srow is-${esc(b.result)}">
-        <div class="srow-top"><span><span class="faint">${i + 1}.</span> <b>${esc(b.label)}</b></span>${badge(b.result)}</div>
-        <div class="srow-mid"><span>${team(b.teams[0])} <span class="faint">vs</span> ${team(b.teams[1])}</span><span>${esc(marketTxt(b))}</span></div>
-        <div class="srow-grid">
-          <div><span>เส้น</span><b>${esc(b.market === 'Spread' ? F.line(b.line) : String(b.line))}</b></div>
-          <div><span>ราคา</span><b>${b.odds == null ? '—' : esc(Number(b.odds).toFixed(2))}</b></div>
-          <div style="grid-column:1/-1"><span>สกอร์</span><b>${b.final ? esc(b.score) : b.result !== 'pending' ? 'ไม่ได้บันทึกสกอร์' : 'ยังไม่แข่ง' + (tipFor(b) ? ' · ' + esc(tipFor(b)) + ' ICT' : '')}</b></div>
-          ${b.verdict ? `<div style="grid-column:1/-1"><span>ผล</span><b>${esc(b.verdict)}</b></div>` : ''}
-        </div>${piBlock(b) ? `<div style="margin-top:var(--sp-2)">${piBlock(b)}</div>` : ''}</div>`).join('');
+    const legCards = t.bets.map((b, i) => mlCard(b, i)).join('');
     const legsSection = t.hasDetail
       ? `<section class="card" aria-labelledby="h-legs"><div class="card-h"><h2 id="h-legs">รายการคู่ในบิล</h2><span class="sub">${t.legs} คู่ · ${esc(legLabel(t))}</span></div>
           <div class="card-b flush tbl-wrap"><table class="dt stack-m"><thead><tr><th scope="col">#</th><th scope="col">เกม</th><th scope="col">เลือก</th><th scope="col">ตลาด</th><th scope="col" class="num">เส้น</th><th scope="col" class="num">ราคา</th><th scope="col">สกอร์จริง</th><th scope="col">วิเคราะห์ผล</th><th scope="col">ผล</th></tr></thead><tbody>${legRows}</tbody></table>
